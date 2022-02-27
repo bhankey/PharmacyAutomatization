@@ -1,0 +1,55 @@
+version: '3.8'
+
+services:
+  postgres:
+    container_name: postgres_container
+    image: postgres:latest
+    environment:
+      POSTGRES_DB: ${DB_NAME:-postgres}
+      POSTGRES_USER: ${PG_USER:-postgres}
+      POSTGRES_PASSWORD: ${PG_PASSWORD:-postgres}
+      PGDATA: /store/postgres
+    volumes:
+      - postgres:/store/postgres
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+
+  pgadmin:
+    container_name: pgadmin_container
+    image: dpage/pgadmin4
+    depends_on:
+      - postgres
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_EMAIL:-some_examplle@exaammmple.yax}
+      PGADMIN_DEFAULT_PASSWORD: ${PG_PASSWORD:-postgres}
+    volumes:
+      - pgadmin:/var/lib/pgadmin
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+
+  redis:
+    image: 'bitnami/redis:latest'
+    environment:
+      - REDIS_PASSWORD=${RD_PASSWORD:-redis}
+    ports:
+      - "6379:6379"
+    volumes:
+    - redis:/bitnami
+
+  migrations:
+    container_name: migrations
+    image: migrate/migrate
+    restart: on-failure
+    depends_on:
+      - postgres
+    volumes:
+        - ./migrations:/database
+    command:
+        [ "-path", "/database", "-database", "postgres://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@postgres:5432/${DB_NAME:-postgres}?sslmode=disable", "${MIGRATIONS_STATUS:-up}"]
+
+volumes:
+  postgres:
+  redis:
+  pgadmin:

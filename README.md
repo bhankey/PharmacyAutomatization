@@ -9,3 +9,4 @@ This project is made for university work. Theme is automatization of pharmacy. I
 - configs - config for start up project
 - migrations - db migration for project
 - docs - any kind of API or description of project
+- elk - docker-compose file with setup elk stack. Just for fun

@@ -37,7 +37,7 @@ func newDataSource(config config.Config) (*dataSources, error) {
 	}
 
 	return &dataSources{
-		db: postgresDB,
-		//		redisClient: rdb,
+		db:          postgresDB,
+		redisClient: rdb,
 	}, nil
 }

@@ -45,6 +45,8 @@ services:
       PGADMIN_DEFAULT_PASSWORD: ${PG_PASSWORD:-postgres}
     volumes:
       - pgadmin:/var/lib/pgadmin
+    networks:
+      - pg-net
     restart: unless-stopped
     ports:
       - "8081:80"

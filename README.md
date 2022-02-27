@@ -1,4 +1,4 @@
-#Pharmacy automatization
+# Pharmacy automatization
 
 This project is made for university work. Theme is automatization of pharmacy. I need to use SQL database for doing it.
 

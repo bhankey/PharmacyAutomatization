@@ -15,7 +15,7 @@ type dataSources struct {
 	redisClient *redis.Client
 }
 
-func newDataSource(config *config.Config) (*dataSources, error) {
+func newDataSource(config config.Config) (*dataSources, error) {
 	postgresDB, err := postgresdb.NewClient(
 		config.Postgres.Host,
 		config.Postgres.Port,

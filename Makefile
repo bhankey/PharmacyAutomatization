@@ -1,6 +1,5 @@
 .PHONY:
 
-
 build:
 	go mod download && go build -o ./server ./cmd/server/main.go
 

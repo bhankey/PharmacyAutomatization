@@ -1,11 +1,22 @@
+output.elasticsearch:
+  hosts: ["http://es-container:9200"]
+  indices:
+    - index: "filebeat-elastic-%{[agent.version]}-%{+yyyy.MM.dd}"
+      when.or:
+        - equals:
+            container.image.name: docker.elastic.co/beats/filebeat:7.2.0
+        - equals:
+            container.image.name: docker.elastic.co/elasticsearch/elasticsearch:7.2.0
+        - equals:
+            container.image.name: docker.elastic.co/kibana/kibana:7.2.0
+    - index: "filebeat-apps-%{[agent.version]}-%{+yyyy.MM.dd}"
+
 filebeat.autodiscover:
   providers:
     - type: docker
       hints.enabled: true
       # only containers with co.elastic.logs/enabled: true will be discovered
       hints.default_config.enabled: false
-output.elasticsearch:
-  hosts: ["http://es-container:9200"]
 
 processors:
   - decode_json_fields:

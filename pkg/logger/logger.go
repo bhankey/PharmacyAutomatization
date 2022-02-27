@@ -37,7 +37,7 @@ func GetLogger(logPath string, level int, printLogsToStdOut bool) (Logger, error
 
 	mw := io.MultiWriter(logFile)
 	if printLogsToStdOut {
-		mw = io.MultiWriter(os.Stdout, os.Stderr, logFile)
+		mw = io.MultiWriter(os.Stdout, logFile)
 	}
 
 	log.SetFormatter(&logrus.JSONFormatter{

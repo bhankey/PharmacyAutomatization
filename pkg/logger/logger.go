@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"path"
 
 	"github.com/sirupsen/logrus"
 )
@@ -25,6 +26,10 @@ func GetLogger(logPath string, level int, printLogsToStdOut bool) (Logger, error
 
 	log.SetLevel(LogLevel)
 
+	if err := os.MkdirAll(path.Dir(logPath), 0666); err != nil {
+		return Logger{}, fmt.Errorf("failed to create log dir: %w", err)
+	}
+
 	logFile, err := os.Create(logPath)
 	if err != nil {
 		return Logger{}, fmt.Errorf("wailed to init logger error: %w", err)
@@ -32,9 +37,12 @@ func GetLogger(logPath string, level int, printLogsToStdOut bool) (Logger, error
 
 	mw := io.MultiWriter(logFile)
 	if printLogsToStdOut {
-		mw = io.MultiWriter(os.Stdout, logFile)
+		mw = io.MultiWriter(os.Stdout, os.Stderr, logFile)
 	}
 
+	log.SetFormatter(&logrus.JSONFormatter{
+		PrettyPrint: false,
+	})
 	log.SetOutput(mw)
 	log.SetLevel(logrus.Level(level))
 

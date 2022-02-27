@@ -11,24 +11,43 @@ services:
       PGDATA: /store/postgres
     volumes:
       - postgres:/store/postgres
+    networks:
+      - pg-net
     restart: unless-stopped
     ports:
       - "5432:5432"
-
+  pharmacy:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    labels:
+      co.elastic.logs/enabled: true
+      co.elastic.logs/json.keys_under_root: true
+      co.elastic.logs/json.overwrite_keys: true
+      co.elastic.logs/json.add_error_key: true
+      co.elastic.logs/json.expand_keys: true
+    networks:
+      - pg-net
+    depends_on:
+      - postgres
+      - redis
+      - migrations
+    ports:
+      - "9005:9005"
+    restart: unless-stopped
   pgadmin:
     container_name: pgadmin_container
     image: dpage/pgadmin4
     depends_on:
       - postgres
     environment:
-      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_EMAIL:-some_examplle@exaammmple.yax}
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_EMAIL:-example@example.example}
       PGADMIN_DEFAULT_PASSWORD: ${PG_PASSWORD:-postgres}
     volumes:
       - pgadmin:/var/lib/pgadmin
     restart: unless-stopped
     ports:
-      - "8080:80"
-
+      - "8081:80"
   redis:
     image: 'bitnami/redis:latest'
     environment:
@@ -37,19 +56,67 @@ services:
       - "6379:6379"
     volumes:
     - redis:/bitnami
-
   migrations:
     container_name: migrations
     image: migrate/migrate
     restart: on-failure
     depends_on:
       - postgres
+    networks:
+      - pg-net
     volumes:
         - ./migrations:/database
     command:
         [ "-path", "/database", "-database", "postgres://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@postgres:5432/${DB_NAME:-postgres}?sslmode=disable", "${MIGRATIONS_STATUS:-up}"]
+  elasticsearch:
+    container_name: es-container
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.0.0
+    environment:
+      - "ES_JAVA_OPTS=-Xms1g -Xmx1g"
+      - xpack.security.enabled=false
+      - "discovery.type=single-node"
+    networks:
+      - es-net
+    ports:
+      - "9200:9200"
+    volumes:
+      - esdata:/usr/share/elasticsearch/data
+    restart: unless-stopped
+  kibana:
+    container_name: kb-container
+    image: docker.elastic.co/kibana/kibana:8.0.0
+    environment:
+      - ELASTICSEARCH_HOSTS=http://es-container:9200
+    networks:
+      - es-net
+    depends_on:
+      - elasticsearch
+    ports:
+      - "5601:5601"
+  filebeat:
+    container_name: fb-container
+    image: docker.elastic.co/beats/filebeat:8.0.0
+    labels:
+      co.elastic.logs/enabled: false
+    user: root
+    command: filebeat -e -strict.perms=false
+    networks:
+      es-net:
+    volumes:
+      - ./elk/filebeat/filebeat.yml:/usr/share/filebeat/filebeat.yml
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    depends_on:
+      - elasticsearch
 
 volumes:
   postgres:
   redis:
   pgadmin:
+  esdata:
+
+networks:
+  es-net:
+    driver: bridge
+  pg-net:
+    driver: bridge

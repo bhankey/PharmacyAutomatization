@@ -3,10 +3,8 @@ package config
 import (
 	"errors"
 	"fmt"
-	"log"
-	"sync"
-
 	"github.com/ilyakaznacheev/cleanenv"
+	"log"
 )
 
 var ErrConfigInit = errors.New("failed to init config")
@@ -37,35 +35,16 @@ type Config struct {
 	}
 }
 
-// nolint: gochecknoglobals
-var instance *Config // TODO Mustn't be singleton
-
-// nolint: gochecknoglobals
-var once sync.Once
-
 // GetConfig return pointer to config. Config is singleton.
-func GetConfig(path string) (c *Config, err error) {
-	once.Do(func() {
-		log.Print("reading server config file")
-		instance = &Config{}
-		if path == "" {
-			path = "./config/config.yaml"
-		}
-		if err = cleanenv.ReadConfig(path, instance); err != nil {
-			once = sync.Once{}
-
-			instance = nil
-
-			return
-		}
-	})
-
-	if err != nil {
-		return nil, fmt.Errorf("%s: %w", ErrConfigInit.Error(), err)
+func GetConfig(path string) (c Config, err error) {
+	log.Print("reading server config file")
+	if path == "" {
+		path = "./config/config.yaml"
 	}
 
-	if instance == nil {
-		return nil, ErrConfigInit
+	instance := Config{}
+	if err = cleanenv.ReadConfig(path, &instance); err != nil {
+		return Config{}, fmt.Errorf("%s: %w", ErrConfigInit.Error(), err)
 	}
 
 	return instance, nil

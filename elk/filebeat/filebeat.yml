@@ -1,0 +1,16 @@
+filebeat.autodiscover:
+  providers:
+    - type: docker
+      hints.enabled: true
+      # only containers with co.elastic.logs/enabled: true will be discovered
+      hints.default_config.enabled: false
+output.elasticsearch:
+  hosts: ["http://es-container:9200"]
+
+processors:
+  - decode_json_fields:
+      fields: ["message"]
+      target: "json"
+      overwrite_keys: true
+  - add_docker_metadata:
+      host: "unix:///var/run/docker.sock"

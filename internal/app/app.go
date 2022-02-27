@@ -37,6 +37,7 @@ func NewApp(configPath string) (*App, error) {
 		return nil, fmt.Errorf("failed to init logger error: %w", err)
 	}
 
+	log.Info("try to init data source resource")
 	// TODO remove dataSource struct
 	dataSources, err := newDataSource(config)
 	if err != nil {

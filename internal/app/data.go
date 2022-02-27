@@ -1,7 +1,6 @@
 package app
 
 import (
-	"context"
 	"fmt"
 
 	"github.com/bhankey/BD_lab/backend/internal/config"
@@ -15,7 +14,7 @@ type dataSources struct {
 	redisClient *redis.Client
 }
 
-func newDataSource(config *config.Config) (*dataSources, error) {
+func newDataSource(config config.Config) (*dataSources, error) {
 	postgresDB, err := postgresdb.NewClient(
 		config.Postgres.Host,
 		config.Postgres.Port,
@@ -26,18 +25,18 @@ func newDataSource(config *config.Config) (*dataSources, error) {
 		return nil, fmt.Errorf("failed to init postgres connection error: %w", err)
 	}
 
-	rdb := redis.NewClient(&redis.Options{
-		Addr:     fmt.Sprintf("%s:%s", config.Redis.Host, config.Redis.Port),
-		Password: config.Redis.Password,
-		DB:       0,
-	})
-
-	if _, err := rdb.Ping(context.Background()).Result(); err != nil {
-		return nil, fmt.Errorf("failed init redis conntection: %w", err)
-	}
+	//rdb := redis.NewClient(&redis.Options{
+	//	Addr:     fmt.Sprintf("%s:%s", config.Redis.Host, config.Redis.Port),
+	//	Password: config.Redis.Password,
+	//	DB:       0,
+	//})
+	//
+	//if _, err := rdb.Ping(context.Background()).Result(); err != nil {
+	//	return nil, fmt.Errorf("failed init redis conntection: %w", err)
+	//}
 
 	return &dataSources{
-		db:          postgresDB,
-		redisClient: rdb,
+		db: postgresDB,
+		//		redisClient: rdb,
 	}, nil
 }

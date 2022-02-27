@@ -15,6 +15,8 @@ type Logger struct {
 
 const LogLevel = logrus.DebugLevel
 
+const StandardPermission = 0o666
+
 // GetLogger Init initialize logger.
 func GetLogger(logPath string, level int, printLogsToStdOut bool) (Logger, error) {
 	log := logrus.New()
@@ -26,7 +28,7 @@ func GetLogger(logPath string, level int, printLogsToStdOut bool) (Logger, error
 
 	log.SetLevel(LogLevel)
 
-	if err := os.MkdirAll(path.Dir(logPath), 0666); err != nil {
+	if err := os.MkdirAll(path.Dir(logPath), StandardPermission); err != nil {
 		return Logger{}, fmt.Errorf("failed to create log dir: %w", err)
 	}
 

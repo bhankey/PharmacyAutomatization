@@ -3,10 +3,11 @@ package http
 import (
 	"context"
 	"encoding/json"
+	"net/http"
+
 	"github.com/bhankey/BD_lab/backend/internal/delivery/http/v1/models"
 	"github.com/bhankey/BD_lab/backend/pkg/logger"
 	"github.com/sirupsen/logrus"
-	"net/http"
 )
 
 type BaseHandler struct {

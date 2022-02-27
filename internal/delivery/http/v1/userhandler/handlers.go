@@ -2,10 +2,11 @@ package userhandler
 
 import (
 	"encoding/json"
+	"net/http"
+
 	deliveryhttp "github.com/bhankey/BD_lab/backend/internal/delivery/http"
 	"github.com/bhankey/BD_lab/backend/internal/delivery/http/v1/models"
 	"github.com/go-openapi/strfmt"
-	"net/http"
 )
 
 func (h *UserHandler) login(w http.ResponseWriter, r *http.Request) {

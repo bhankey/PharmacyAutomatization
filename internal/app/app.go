@@ -3,6 +3,7 @@ package app
 import (
 	"context"
 	"fmt"
+	"github.com/bhankey/BD_lab/backend/internal/delivery/http/middleware"
 	"net/http"
 	"os"
 	"os/signal"
@@ -62,7 +63,7 @@ func NewApp(configPath string) (*App, error) {
 	}))
 
 	router.Use(func(handler http.Handler) http.Handler {
-		return httphandler.LoggingMiddleware(log)(handler)
+		return middleware.LoggingMiddleware(log)(handler)
 	})
 
 	router.Mount("/docs", swaggerHandler.Router)

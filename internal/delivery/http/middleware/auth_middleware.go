@@ -2,10 +2,11 @@ package middleware
 
 import (
 	"context"
+	"net/http"
+
 	"github.com/bhankey/BD_lab/backend/internal/entities"
 	"github.com/bhankey/BD_lab/backend/pkg/logger"
 	"github.com/dgrijalva/jwt-go"
-	"net/http"
 )
 
 type AuthMiddleware struct {
@@ -47,11 +48,10 @@ func (m *AuthMiddleware) Middleware(next http.Handler) http.Handler {
 		}
 
 		ctx := r.Context()
-		ctx = context.WithValue(ctx, "client_id", claim.UserID)
-		ctx = context.WithValue(ctx, "email", claim.Email)
+		ctx = context.WithValue(ctx, entities.UserID, claim.UserID)
+		ctx = context.WithValue(ctx, entities.Email, claim.Email)
 
-		r.WithContext(ctx)
-
+		r = r.WithContext(ctx)
 		next.ServeHTTP(w, r)
 	})
 }

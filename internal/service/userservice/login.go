@@ -49,4 +49,6 @@ func (s *UserService) GenerateAndSaveRefreshToken(ctx context.Context, userID in
 		return "", fmt.Errorf("failed to sign token error: %w", err)
 	}
 
+	// TODO
+	return "", nil
 }

@@ -12,15 +12,24 @@ type Container struct {
 	redisConnection  *redis.Client
 	logger           logger.Logger
 
+	passwordSalt string
+	jwtKey       string
+
 	dependencies map[string]interface{}
 }
 
-func NewContainer(log logger.Logger, masterPostgres, slavePostgres *sqlx.DB, redis *redis.Client) *Container {
+func NewContainer(
+	log logger.Logger,
+	masterPostgres, slavePostgres *sqlx.DB,
+	redis *redis.Client,
+	passwordSalt, jwtKey string) *Container {
 	return &Container{
 		masterPostgresDB: masterPostgres,
 		slavePostgresDB:  slavePostgres,
 		redisConnection:  redis,
 		logger:           log,
+		passwordSalt:     passwordSalt,
+		jwtKey:           jwtKey,
 		dependencies:     make(map[string]interface{}),
 	}
 }

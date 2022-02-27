@@ -1,4 +1,4 @@
-swagger: "3.0"
+swagger: "2.0"
 info:
   description: Pharmacy
   title: Pharmacy
@@ -12,8 +12,8 @@ schemes:
 tags:
   - name: payments
     description: Payments
-  - name: account
-    description: User bank account
+  - name: user
+    description: User of system
   - name: report
     description: report
 paths:
@@ -36,6 +36,31 @@ paths:
           schema:
             $ref: '#/definitions/BaseResponse'
 
+  /user/login:
+    post:
+      tags:
+        - user
+      parameters:
+        - in: body
+          name: body
+          schema:
+            $ref: '#/definitions/UserLoginRequest'
+      responses:
+        200:
+          description: login success
+          schema:
+            $ref: '#/definitions/UserLoginResponse'
+        401:
+          description: failed to authorize
+          schema:
+            $ref: '#/definitions/BaseResponse'
+        500:
+          description: internal server error
+          schema:
+            $ref: '#/definitions/BaseResponse'
+  /user/refresh:
+
+
 definitions:
   BaseResponse:
     type: object
@@ -46,3 +71,19 @@ definitions:
       success:
         type: boolean
         x-omitempty: false
+
+  UserLoginRequest:
+    type: object
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+
+  UserLoginResponse:
+    type: object
+    properties:
+      token:
+        type: string
+      refresh_token:
+        type: string

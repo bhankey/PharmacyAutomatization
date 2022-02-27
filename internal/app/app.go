@@ -44,7 +44,7 @@ func NewApp(configPath string) (*App, error) {
 		return nil, err
 	}
 
-	dependencies := container.NewContainer(log, dataSources.db, dataSources.db, dataSources.redisClient)
+	dependencies := container.NewContainer(log, dataSources.db, dataSources.db, dataSources.redisClient, config.Secure.PasswordSalt, config.Secure.JwtKey)
 
 	baseHandler := httphandler.NewHandler(log)
 
@@ -66,6 +66,7 @@ func NewApp(configPath string) (*App, error) {
 	})
 
 	router.Mount("/docs", swaggerHandler.Router)
+	router.Mount("/user", dependencies.GetUserHandler().Router)
 
 	server := &http.Server{
 		Addr:    ":" + config.Server.Port,

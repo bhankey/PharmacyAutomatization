@@ -7,3 +7,6 @@ type User struct {
 	PasswordHash      string
 	DefaultPharmacyID int
 }
+
+type UserIdentifyData struct {
+}

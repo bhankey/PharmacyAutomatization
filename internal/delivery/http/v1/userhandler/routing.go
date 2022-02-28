@@ -3,7 +3,7 @@ package userhandler
 import (
 	"context"
 
-	deliveryhttp "github.com/bhankey/BD_lab/backend/internal/delivery/http"
+	deliveryhttp "github.com/bhankey/pharmacy-automatization/internal/delivery/http"
 	"github.com/go-chi/chi/v5"
 )
 

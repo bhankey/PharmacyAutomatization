@@ -1,7 +1,7 @@
 package container
 
 import (
-	"github.com/bhankey/BD_lab/backend/pkg/logger"
+	"github.com/bhankey/pharmacy-automatization/pkg/logger"
 	"github.com/go-redis/redis/v8"
 	"github.com/jmoiron/sqlx"
 )

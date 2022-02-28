@@ -4,8 +4,8 @@ import (
 	"context"
 	"net/http"
 
-	"github.com/bhankey/BD_lab/backend/internal/entities"
-	"github.com/bhankey/BD_lab/backend/pkg/logger"
+	"github.com/bhankey/pharmacy-automatization/internal/entities"
+	"github.com/bhankey/pharmacy-automatization/pkg/logger"
 	"github.com/dgrijalva/jwt-go"
 )
 

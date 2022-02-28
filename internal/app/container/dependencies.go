@@ -1,11 +1,11 @@
 package container
 
 import (
-	"github.com/bhankey/BD_lab/backend/internal/delivery/http"
-	"github.com/bhankey/BD_lab/backend/internal/delivery/http/middleware"
-	"github.com/bhankey/BD_lab/backend/internal/delivery/http/v1/userhandler"
-	"github.com/bhankey/BD_lab/backend/internal/repository/userrepo"
-	"github.com/bhankey/BD_lab/backend/internal/service/userservice"
+	"github.com/bhankey/pharmacy-automatization/internal/delivery/http"
+	"github.com/bhankey/pharmacy-automatization/internal/delivery/http/middleware"
+	"github.com/bhankey/pharmacy-automatization/internal/delivery/http/v1/userhandler"
+	"github.com/bhankey/pharmacy-automatization/internal/repository/userrepo"
+	"github.com/bhankey/pharmacy-automatization/internal/service/userservice"
 )
 
 func (c *Container) GetUserHandler() *userhandler.UserHandler {

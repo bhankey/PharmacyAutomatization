@@ -1,4 +1,4 @@
-module github.com/bhankey/BD_lab/backend
+module github.com/bhankey/pharmacy-automatization
 
 go 1.17
 

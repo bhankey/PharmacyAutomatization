@@ -24,6 +24,6 @@ type RefreshToken struct {
 	UserAgent    string
 	IP           string
 	FingerPrint  string
-	IsAvailable  string
+	IsAvailable  bool
 	CreationTime time.Time
 }

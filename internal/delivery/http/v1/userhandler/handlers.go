@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"net/http"
 
-	deliveryhttp "github.com/bhankey/BD_lab/backend/internal/delivery/http"
-	"github.com/bhankey/BD_lab/backend/internal/delivery/http/v1/models"
+	deliveryhttp "github.com/bhankey/pharmacy-automatization/internal/delivery/http"
+	"github.com/bhankey/pharmacy-automatization/internal/delivery/http/v1/models"
 	"github.com/go-openapi/strfmt"
 )
 

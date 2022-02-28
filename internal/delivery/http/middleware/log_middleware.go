@@ -5,7 +5,7 @@ import (
 	"runtime/debug"
 	"time"
 
-	"github.com/bhankey/BD_lab/backend/pkg/logger"
+	"github.com/bhankey/pharmacy-automatization/pkg/logger"
 	"github.com/pborman/uuid"
 	"github.com/sirupsen/logrus"
 )

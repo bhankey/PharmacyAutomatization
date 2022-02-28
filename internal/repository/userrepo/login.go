@@ -6,8 +6,8 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/bhankey/BD_lab/backend/internal/entities"
-	"github.com/bhankey/BD_lab/backend/internal/repository"
+	"github.com/bhankey/pharmacy-automatization/internal/entities"
+	"github.com/bhankey/pharmacy-automatization/internal/repository"
 )
 
 func (r *UserRepo) GetUserByEmail(ctx context.Context, email string) (entities.User, error) {

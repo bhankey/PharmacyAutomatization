@@ -20,8 +20,8 @@ secure:
   jwt_key: "someSecureKey"
   password_salt: "someSecureSalt"
 smtp:
-  host: "smtp.elasticemail.com"
+  host: "some"
   port: 2525
-  user: "pharmmmm@elastic.com"
-  password: "F50CE68B7F1F55605A958DFD27D14784FC77"
+  user: "some"
+  password: "some"
   from: "aa@dotodo.one"

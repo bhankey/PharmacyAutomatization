@@ -61,12 +61,10 @@ func NewApp(configPath string) (*App, error) {
 	)
 
 	baseHandler := httphandler.NewHandler(log)
-
 	swaggerHandler := swaggerhandler.NewSwaggerHandler(baseHandler)
 
 	// TODO move to different package or function
 	router := chi.NewRouter()
-
 	router.Use(cors.Handler(cors.Options{
 		AllowedOrigins:   []string{"https://*", "http://*"},
 		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
@@ -74,11 +72,9 @@ func NewApp(configPath string) (*App, error) {
 		ExposedHeaders:   []string{"Link"},
 		AllowCredentials: false,
 	}))
-
 	router.Use(func(handler http.Handler) http.Handler {
 		return middleware.LoggingMiddleware(log)(handler)
 	})
-
 	router.Use(middleware.FingerPrint)
 
 	router.Mount("/docs", swaggerHandler.Router)

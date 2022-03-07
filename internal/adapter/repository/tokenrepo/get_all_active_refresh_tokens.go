@@ -3,8 +3,9 @@ package tokenrepo
 import (
 	"context"
 	"fmt"
-	"github.com/bhankey/pharmacy-automatization/internal/entities"
 	"time"
+
+	"github.com/bhankey/pharmacy-automatization/internal/entities"
 )
 
 func (r *TokenRepo) GetAllActiveRefreshTokens(ctx context.Context, userID int) ([]entities.RefreshToken, error) {

@@ -1,11 +1,16 @@
 package container
 
 import (
+	"time"
+
+	"github.com/bhankey/pharmacy-automatization/internal/adapter/repository/emailrepo"
+	"github.com/bhankey/pharmacy-automatization/internal/adapter/repository/onetimecodesrepo"
+	"github.com/bhankey/pharmacy-automatization/internal/adapter/repository/tokenrepo"
+	"github.com/bhankey/pharmacy-automatization/internal/adapter/repository/userrepo"
 	"github.com/bhankey/pharmacy-automatization/internal/delivery/http"
 	"github.com/bhankey/pharmacy-automatization/internal/delivery/http/middleware"
 	"github.com/bhankey/pharmacy-automatization/internal/delivery/http/v1/userhandler"
-	"github.com/bhankey/pharmacy-automatization/internal/repository/userrepo"
-	"github.com/bhankey/pharmacy-automatization/internal/service/userservice"
+	"github.com/bhankey/pharmacy-automatization/internal/service/authservice"
 )
 
 func (c *Container) GetUserHandler() *userhandler.UserHandler {
@@ -40,21 +45,29 @@ func (c *Container) getBaseHandler() *http.BaseHandler {
 	typedDependency := http.NewHandler(c.logger)
 
 	c.dependencies[key] = typedDependency
+
 	return typedDependency
 }
 
-func (c *Container) getUserSrv() *userservice.UserService {
+func (c *Container) getUserSrv() *authservice.AuthService {
 	const key = "UserSrv"
 
 	dependency, ok := c.dependencies[key]
 	if ok {
-		typedDependency, ok := dependency.(*userservice.UserService)
+		typedDependency, ok := dependency.(*authservice.AuthService)
 		if ok {
 			return typedDependency
 		}
 	}
 
-	typedDependency := userservice.NewUserService(c.getUserStorage(), c.passwordSalt, c.jwtKey)
+	typedDependency := authservice.NewUserService(
+		c.getUserStorage(),
+		c.getTokenStorage(),
+		c.getEmailStorage(),
+		c.getOneTimeCodesPasswordStorage(),
+		c.passwordSalt,
+		c.jwtKey,
+	)
 
 	c.dependencies[key] = typedDependency
 
@@ -73,6 +86,62 @@ func (c *Container) getUserStorage() *userrepo.UserRepo {
 	}
 
 	typedDependency := userrepo.NewUserRepo(c.masterPostgresDB, c.slavePostgresDB)
+
+	c.dependencies[key] = typedDependency
+
+	return typedDependency
+}
+
+func (c *Container) getTokenStorage() *tokenrepo.TokenRepo {
+	const key = "TokenStorage"
+
+	dependency, ok := c.dependencies[key]
+	if ok {
+		typedDependency, ok := dependency.(*tokenrepo.TokenRepo)
+		if ok {
+			return typedDependency
+		}
+	}
+
+	typedDependency := tokenrepo.NewTokenRepo(c.masterPostgresDB, c.slavePostgresDB)
+
+	c.dependencies[key] = typedDependency
+
+	return typedDependency
+}
+
+func (c *Container) getEmailStorage() *emailrepo.EmailRepo {
+	const key = "EmailStorage"
+
+	dependency, ok := c.dependencies[key]
+	if ok {
+		typedDependency, ok := dependency.(*emailrepo.EmailRepo)
+		if ok {
+			return typedDependency
+		}
+	}
+
+	typedDependency := emailrepo.NewEmailRepo(c.smtpClient, c.smtpMessageFrom)
+
+	c.dependencies[key] = typedDependency
+
+	return typedDependency
+}
+
+func (c *Container) getOneTimeCodesPasswordStorage() *onetimecodesrepo.ResetCodesRepo {
+	const key = "OneTimeCodesPasswordStorage"
+
+	dependency, ok := c.dependencies[key]
+	if ok {
+		typedDependency, ok := dependency.(*onetimecodesrepo.ResetCodesRepo)
+		if ok {
+			return typedDependency
+		}
+	}
+
+	const timeOfLife = time.Second * 15 // TODO move to config or something else
+
+	typedDependency := onetimecodesrepo.NewResetCodesRepo(c.redisConnection, timeOfLife)
 
 	c.dependencies[key] = typedDependency
 

@@ -16,19 +16,19 @@ services:
     restart: unless-stopped
     ports:
       - "5432:5432"
-  pharmacy:
-    build:
-      context: ./
-      dockerfile: Dockerfile
-    networks:
-      - pg-net
-    depends_on:
-      - postgres
-      - redis
-      - migrations
-    ports:
-      - "9005:9005"
-    restart: unless-stopped
+#  pharmacy:
+#    build:
+#      context: ./
+#      dockerfile: Dockerfile
+#    networks:
+#      - pg-net
+#    depends_on:
+#      - postgres
+#      - redis
+#      - migrations
+#    ports:
+#      - "9005:9005"
+#    restart: unless-stopped
   pgadmin:
     container_name: pgadmin_container
     image: dpage/pgadmin4

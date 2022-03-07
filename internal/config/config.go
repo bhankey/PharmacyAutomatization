@@ -38,6 +38,13 @@ type Config struct {
 		JwtKey       string `yaml:"jwt_key" env:"JWT_KEY"`
 		PasswordSalt string `yaml:"password_salt" env:"PASSWORD_SALT"`
 	}
+	SMTP struct {
+		Host     string `yaml:"host" env:"SMTP_HOST"`
+		Port     int    `yaml:"port" env:"SMTP_PORT"`
+		User     string `yaml:"user" env:"SMTP_USER"`
+		Password string `yaml:"password" env:"SMTP_PASSWORD"`
+		From     string `yaml:"from" env:"SMTP_FROM"`
+	}
 }
 
 // GetConfig return pointer to config. Config is singleton.

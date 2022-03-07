@@ -17,25 +17,6 @@ tags:
   - name: report
     description: report
 paths:
-  /health: # TODO delete when other endpoints appear
-    post:
-      tags:
-        - payments
-      parameters:
-        - in: body
-          name: body
-          schema:
-            $ref: '#/definitions/BaseResponse'
-      responses:
-        200:
-          description: OK
-          schema:
-            $ref: '#/definitions/BaseResponse'
-        400:
-          description: Failed
-          schema:
-            $ref: '#/definitions/BaseResponse'
-
   /user/login:
     post:
       tags:
@@ -49,7 +30,7 @@ paths:
         200:
           description: login success
           schema:
-            $ref: '#/definitions/UserLoginResponse'
+            $ref: '#/definitions/BaseResponse'
         401:
           description: failed to authorize
           schema:
@@ -59,6 +40,27 @@ paths:
           schema:
             $ref: '#/definitions/BaseResponse'
   /user/refresh:
+    post:
+      tags:
+        - user
+      parameters:
+        - in: body
+          name: body
+          schema:
+            $ref: '#/definitions/UserRefreshRequest'
+      responses:
+        200:
+          description: refresh success
+          schema:
+            $ref: '#/definitions/BaseResponse'
+        401:
+          description: failed to refresh
+          schema:
+            $ref: '#/definitions/BaseResponse'
+        500:
+          description: internal server error
+          schema:
+            $ref: '#/definitions/BaseResponse'
 
 
 definitions:
@@ -74,16 +76,21 @@ definitions:
 
   UserLoginRequest:
     type: object
+    required:
+      - email
+      - password
     properties:
       email:
         type: string
+        format: email
       password:
         type: string
+        minLength: 8
 
-  UserLoginResponse:
+  UserRefreshRequest:
     type: object
+    required:
+      - token
     properties:
       token:
-        type: string
-      refresh_token:
         type: string

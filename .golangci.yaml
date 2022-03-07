@@ -12,6 +12,7 @@ linters:
     - maligned  # deprecated
     - tagliatelle # for my opinion me bad linter
     - godox  # Better to turn on
+    - wrapcheck # TODO return when create a technique of normal wrapping
 
 linters-settings:
   varnamelen:

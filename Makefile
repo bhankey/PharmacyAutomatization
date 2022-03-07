@@ -12,7 +12,7 @@ migrations-up:
 migrations-down:
 	MIGRATIONS_STATUS=down docker-compose -f docker-compose-down-migrations.yaml up
 
-run: build
+run: .build
 	./server
 
 test:

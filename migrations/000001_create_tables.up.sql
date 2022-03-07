@@ -41,7 +41,7 @@ CREATE TABLE IF NOT EXISTS users (
         id serial NOT NULL PRIMARY KEY,
         name text NOT NULL DEFAULT '',
         surname text NOT NULL DEFAULT '',
-        email text NOT NULL DEFAULT '',
+        email text UNIQUE NOT NULL DEFAULT '',
         password_hash text NOT NULL,
         use_ip_check bool NOT NULL DEFAULT true,
         default_pharmacy_id int REFERENCES pharmacy(id),
@@ -147,7 +147,7 @@ CREATE TABLE IF NOT EXISTS complaints (
 CREATE TABLE IF NOT EXISTS refresh_tokens (
     id bigserial NOT NULL PRIMARY KEY,
     user_id int REFERENCES users(id),
-    refresh_token text NOT NULL,
+    refresh_token text UNIQUE NOT NULL,
     user_agent text NOT NULL,
     ip text NOT NULL,
     finger_print text NOT NULL,

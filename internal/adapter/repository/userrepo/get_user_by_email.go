@@ -6,8 +6,8 @@ import (
 	"errors"
 	"fmt"
 
+	"github.com/bhankey/pharmacy-automatization/internal/apperror"
 	"github.com/bhankey/pharmacy-automatization/internal/entities"
-	"github.com/bhankey/pharmacy-automatization/internal/repository"
 )
 
 func (r *UserRepo) GetUserByEmail(ctx context.Context, email string) (entities.User, error) {
@@ -21,23 +21,24 @@ func (r *UserRepo) GetUserByEmail(ctx context.Context, email string) (entities.U
 	row := struct {
 		ID                int           `db:"id"`
 		Name              string        `db:"name"`
+		Surname           string        `json:"surname"`
 		Email             string        `db:"email"`
 		PasswordHash      string        `db:"password_hash"`
 		DefaultPharmacyID sql.NullInt64 `db:"default_pharmacy_id"`
 	}{}
 
-	var password string
-	if err := r.slave.GetContext(ctx, &password, query, email); err != nil {
+	if err := r.slave.GetContext(ctx, &row, query, email); err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			return entities.User{}, repository.ErrNoEntity
+			return entities.User{}, apperror.ErrNoEntity
 		}
 
-		return entities.User{}, fmt.Errorf("failed to get user password_hash error: %w", err)
+		return entities.User{}, fmt.Errorf("failed to get user by email error: %w", err)
 	}
 
 	return entities.User{
 		ID:                row.ID,
 		Name:              row.Name,
+		Surname:           row.Surname,
 		Email:             row.Email,
 		PasswordHash:      row.PasswordHash,
 		DefaultPharmacyID: int(row.DefaultPharmacyID.Int64),

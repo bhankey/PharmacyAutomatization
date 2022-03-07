@@ -17,6 +17,9 @@ import (
 // swagger:model UserLoginResponse
 type UserLoginResponse struct {
 
+	// refresh token
+	RefreshToken string `json:"refresh_token,omitempty"`
+
 	// token
 	Token string `json:"token,omitempty"`
 }

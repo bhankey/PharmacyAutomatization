@@ -3,7 +3,6 @@ package app
 import (
 	"context"
 	"fmt"
-	"github.com/bhankey/pharmacy-automatization/internal/delivery/http/middleware"
 	"net/http"
 	"os"
 	"os/signal"
@@ -13,6 +12,7 @@ import (
 	"github.com/bhankey/pharmacy-automatization/internal/app/container"
 	configinternal "github.com/bhankey/pharmacy-automatization/internal/config"
 	httphandler "github.com/bhankey/pharmacy-automatization/internal/delivery/http"
+	"github.com/bhankey/pharmacy-automatization/internal/delivery/http/middleware"
 	"github.com/bhankey/pharmacy-automatization/internal/delivery/http/swaggerhandler"
 	"github.com/bhankey/pharmacy-automatization/pkg/logger"
 	"github.com/go-chi/chi/v5"
@@ -39,13 +39,26 @@ func NewApp(configPath string) (*App, error) {
 	}
 
 	log.Info("try to init data source resource")
-	// TODO remove dataSource struct
-	dataSources, err := newDataSource(config)
+	dataSources, err := newDataSource(config) // TODO remove dataSource struct
 	if err != nil {
 		return nil, err
 	}
 
-	dependencies := container.NewContainer(log, dataSources.db, dataSources.db, dataSources.redisClient, config.Secure.PasswordSalt, config.Secure.JwtKey)
+	smtp, err := newSMTPClient(config)
+	if err != nil {
+		return nil, err
+	}
+
+	dependencies := container.NewContainer(
+		log,
+		dataSources.db,
+		dataSources.db,
+		dataSources.redisClient,
+		smtp,
+		config.Secure.PasswordSalt,
+		config.Secure.JwtKey,
+		config.SMTP.From,
+	)
 
 	baseHandler := httphandler.NewHandler(log)
 
@@ -66,6 +79,8 @@ func NewApp(configPath string) (*App, error) {
 		return middleware.LoggingMiddleware(log)(handler)
 	})
 
+	router.Use(middleware.FingerPrint)
+
 	router.Mount("/docs", swaggerHandler.Router)
 	router.Mount("/user", dependencies.GetUserHandler().Router)
 
@@ -74,11 +89,7 @@ func NewApp(configPath string) (*App, error) {
 		Handler: router,
 	}
 
-	return &App{
-		logger:    log,
-		server:    server,
-		container: dependencies,
-	}, nil
+	return &App{logger: log, server: server, container: dependencies}, nil
 }
 
 func (a *App) Start() {

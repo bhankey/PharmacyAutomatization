@@ -2,9 +2,12 @@ package userrepo
 
 import (
 	"context"
+	"fmt"
 )
 
 func (r *UserRepo) UpdatePassword(ctx context.Context, email string, newPasswordHash string) error {
+	errBase := fmt.Sprintf("userrepo.UpdatePassword(%s, %s)", email, newPasswordHash)
+
 	const query = `
 		UPDATE users 
 		SET password_hash = $1
@@ -16,7 +19,7 @@ func (r *UserRepo) UpdatePassword(ctx context.Context, email string, newPassword
 		newPasswordHash,
 		email,
 	); err != nil {
-		return err
+		return fmt.Errorf("%s: failed to update password: %w", errBase, err)
 	}
 
 	return nil

@@ -2,6 +2,7 @@ package emailrepo
 
 import (
 	"bytes"
+	"fmt"
 	"text/template"
 
 	mail "github.com/xhit/go-simple-mail/v2"
@@ -21,9 +22,13 @@ func NewEmailRepo(smtp *mail.SMTPClient, from string) *EmailRepo {
 }
 
 func (r *EmailRepo) SendResetPasswordCode(email string, code string) error {
-	htmlTemplate, err := template.ParseFiles("./internal/adapter/repository/emailrepo/reset_password.html")
+	errBase := fmt.Sprintf("emailrepo.SendResetPasswordCode(%s, %s)", email, code)
+
+	htmlTemplate, err := template.ParseFiles(
+		"./internal/adapter/repository/emailrepo/reset_password.html",
+	) // TODO really bad
 	if err != nil {
-		return err
+		return fmt.Errorf("%s: failed to parse html template: %w", errBase, err)
 	}
 
 	var body bytes.Buffer
@@ -32,7 +37,7 @@ func (r *EmailRepo) SendResetPasswordCode(email string, code string) error {
 	}{
 		Code: code,
 	}); err != nil {
-		return err
+		return fmt.Errorf("%s: failed to execute html template: %w", errBase, err)
 	}
 
 	emailMessage := mail.NewMSG()
@@ -43,11 +48,11 @@ func (r *EmailRepo) SendResetPasswordCode(email string, code string) error {
 		SetBody(mail.TextHTML, body.String())
 
 	if err := emailMessage.Send(r.smtp); err != nil {
-		return err
+		return fmt.Errorf("%s: failed to send message: %w", errBase, err)
 	}
 
 	if emailMessage.Error != nil {
-		return emailMessage.Error
+		return fmt.Errorf("%s: failed to send message email error: %w", errBase, emailMessage.Error)
 	}
 
 	return nil

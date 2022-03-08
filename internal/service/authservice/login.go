@@ -16,7 +16,7 @@ const (
 	jwtExpireTime        = time.Minute * 15
 	jwtExpireRefreshTime = time.Hour * 24 * 60
 	maxActivateToken     = 5
-	slaveLag             = 20
+	slaveLag             = 5
 )
 
 // Move this to some service that implement registry pattern (consul).
@@ -26,9 +26,11 @@ func (s *AuthService) Login(
 	password string,
 	identifyData entities.UserIdentifyData,
 ) (entities.Tokens, error) {
+	errBase := fmt.Sprintf("authservice.Login(%s, %s, %v)", email, password, identifyData)
+
 	user, err := s.userStorage.GetUserByEmail(ctx, email)
 	if err != nil && !errors.Is(err, apperror.ErrNoEntity) {
-		return entities.Tokens{}, fmt.Errorf("failed to user: %w", err)
+		return entities.Tokens{}, fmt.Errorf("%s :failed to get user: %w", errBase, err)
 	}
 
 	if errors.Is(err, apperror.ErrNoEntity) {
@@ -41,16 +43,18 @@ func (s *AuthService) Login(
 
 	accessToken, err := s.createAndSignedToken(user.ID, email, jwtExpireTime)
 	if err != nil {
-		return entities.Tokens{}, fmt.Errorf("failed to create and sigend accass token error: %w", err)
+		return entities.Tokens{}, fmt.Errorf("%s: failed to create and sigend accass token error: %w", errBase, err)
 	}
 
 	refreshToken, err := s.createAndSaveRefreshToken(ctx, user.ID, email, identifyData)
 	if err != nil {
-		return entities.Tokens{}, fmt.Errorf("failed to create and sigend refresh token error: %w", err)
+		return entities.Tokens{}, fmt.Errorf("%s: failed to create and sigend refresh token error: %w", errBase, err)
 	}
 
-	// TODO write wrap to catch panic in gorutine
+	// TODO write wrap to catch panic in goroutine
 	go func() {
+		ctx := context.Background()
+
 		time.Sleep(time.Second * slaveLag) // In 20 seconds slave will surely update data
 
 		_ = s.deactivateMaxReachedTokensCount(ctx, user.ID) // TODO think about async error handling
@@ -71,7 +75,7 @@ func (s *AuthService) deactivateMaxReachedTokensCount(ctx context.Context, userI
 	if len(tokens) > maxActivateToken {
 		tokensIDsToDeativate := make([]int, 0, len(tokens)-maxActivateToken)
 		sort.Slice(tokens, func(i, j int) bool {
-			return tokens[i].ID > tokens[j].ID
+			return tokens[i].ID < tokens[j].ID
 		})
 
 		for i := 0; i < len(tokens)-maxActivateToken; i++ {

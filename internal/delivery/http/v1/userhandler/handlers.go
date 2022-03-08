@@ -11,12 +11,11 @@ import (
 	"github.com/go-openapi/strfmt"
 )
 
-// TODO move login... to auth handler.
-func (h *UserHandler) login(w http.ResponseWriter, r *http.Request) {
+func (h *UserHandler) register(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
 	defer func() { _ = r.Body.Close() }()
-	var req models.UserLoginRequest
+	var req models.RegisterRequest
 
 	decoder := json.NewDecoder(r.Body)
 
@@ -33,37 +32,18 @@ func (h *UserHandler) login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	deviceFingerPrint, _ := ctx.Value(entities.DeviceFingerPrint).(string)
-
-	identifyData := entities.UserIdentifyData{
-		IP:          r.RemoteAddr,
-		UserAgent:   r.UserAgent(),
-		FingerPrint: deviceFingerPrint,
+	user := entities.User{
+		ID:       0,
+		Name:     req.Name,
+		Surname:  req.Surname,
+		Email:    req.Email.String(),
+		Password: *req.Password,
 	}
-
-	tokens, err := h.userSrv.Login(ctx, req.Email.String(), *req.Password, identifyData)
-	if err != nil {
+	if err := h.userSrv.Registry(ctx, user); err != nil {
 		h.WriteErrorResponse(ctx, w, err)
 
 		return
 	}
-
-	accessTokenCookie := http.Cookie{
-		Name:     "accesstoken",
-		Value:    tokens.AccessToken,
-		Secure:   true,
-		HttpOnly: true,
-	}
-
-	refreshTokenCookie := http.Cookie{
-		Name:     "refreshtoken",
-		Value:    tokens.RefreshToken,
-		Secure:   true,
-		HttpOnly: true,
-	}
-
-	http.SetCookie(w, &accessTokenCookie)
-	http.SetCookie(w, &refreshTokenCookie)
 
 	deliveryhttp.WriteResponse(w, models.BaseResponse{
 		Error:   "",
@@ -71,11 +51,11 @@ func (h *UserHandler) login(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
-func (h *UserHandler) refresh(w http.ResponseWriter, r *http.Request) {
+func (h *UserHandler) requestToChangePassword(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
 	defer func() { _ = r.Body.Close() }()
-	var req models.UserRefreshRequest
+	var req models.RequestPasswordChangeRequest
 
 	decoder := json.NewDecoder(r.Body)
 
@@ -92,37 +72,11 @@ func (h *UserHandler) refresh(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	deviceFingerPrint, _ := ctx.Value(entities.DeviceFingerPrint).(string)
-
-	identifyData := entities.UserIdentifyData{
-		IP:          r.RemoteAddr,
-		UserAgent:   r.UserAgent(),
-		FingerPrint: deviceFingerPrint,
-	}
-
-	tokens, err := h.userSrv.RefreshToken(ctx, *req.Token, identifyData)
-	if err != nil {
+	if err := h.userSrv.RequestToResetPassword(ctx, req.Email.String()); err != nil {
 		h.WriteErrorResponse(ctx, w, err)
 
 		return
 	}
-
-	accessTokenCookie := http.Cookie{
-		Name:     "accesstoken",
-		Value:    tokens.AccessToken,
-		Secure:   true,
-		HttpOnly: true,
-	}
-
-	refreshTokenCookie := http.Cookie{
-		Name:     "refreshtoken",
-		Value:    tokens.RefreshToken,
-		Secure:   true,
-		HttpOnly: true,
-	}
-
-	http.SetCookie(w, &accessTokenCookie)
-	http.SetCookie(w, &refreshTokenCookie)
 
 	deliveryhttp.WriteResponse(w, models.BaseResponse{
 		Error:   "",
@@ -130,15 +84,35 @@ func (h *UserHandler) refresh(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
-func (h *UserHandler) resetPassword(w http.ResponseWriter, r *http.Request) {
-	// if err := h.userSrv.ResetPassword(r.Context(), "", ""); err != nil {
-	//	h.WriteErrorResponse(r.Context(), w, err)
-	//
-	//	return
-	//}
-	//
-	// deliveryhttp.WriteResponse(w, models.BaseResponse{
-	//	Error:   "",
-	//	Success: true,
-	// })
+func (h *UserHandler) changePassword(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	defer func() { _ = r.Body.Close() }()
+	var req models.PasswordChangeRequest
+
+	decoder := json.NewDecoder(r.Body)
+
+	err := decoder.Decode(&req)
+	if err != nil {
+		h.WriteErrorResponse(ctx, w, apperror.NewClientError(apperror.WrongRequest, err))
+
+		return
+	}
+
+	if err := req.Validate(strfmt.NewFormats()); err != nil {
+		h.WriteErrorResponse(ctx, w, apperror.NewClientError(apperror.WrongRequest, err))
+
+		return
+	}
+
+	if err := h.userSrv.ResetPassword(ctx, req.Email.String(), *req.Code, *req.NewPassword); err != nil {
+		h.WriteErrorResponse(ctx, w, err)
+
+		return
+	}
+
+	deliveryhttp.WriteResponse(w, models.BaseResponse{
+		Error:   "",
+		Success: true,
+	})
 }

@@ -8,9 +8,11 @@ import (
 )
 
 func (r *UserRepo) CreateUser(ctx context.Context, user entities.User) error {
+	errBase := fmt.Sprintf("userrepo.CreateUser(%v)", user)
+
 	const query = `
-		INSERT INTO users(name, surname, email, password_hash, default_pharmacy_id)
-							VALUE ($1, $2, $3, $4, $5)
+		INSERT INTO users(name, surname, email, password_hash)
+							VALUES ($1, $2, $3, $4)
 `
 
 	if _, err := r.master.ExecContext(
@@ -18,10 +20,10 @@ func (r *UserRepo) CreateUser(ctx context.Context, user entities.User) error {
 		query,
 		user.Name,
 		user.Surname,
+		user.Email,
 		user.PasswordHash,
-		user.DefaultPharmacyID,
 	); err != nil {
-		return fmt.Errorf("failed to insert refresh token: %w", err)
+		return fmt.Errorf("%s: failed to create user: %w", errBase, err)
 	}
 
 	return nil

@@ -1,4 +1,4 @@
-package authservice
+package userservice
 
 import (
 	"context"
@@ -8,16 +8,18 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-func (s *AuthService) Registry(ctx context.Context, user entities.User, identifyData entities.UserIdentifyData) error {
+func (s *UserService) Registry(ctx context.Context, user entities.User) error {
+	errBase := fmt.Sprintf("userservice.Registry(%v)", user)
+
 	passwordHash, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
 	if err != nil {
-		return fmt.Errorf("failed to create hash from password error: %w", err)
+		return fmt.Errorf("%s: failed to create hash from password error: %w", errBase, err)
 	}
 
 	user.PasswordHash = string(passwordHash)
 
 	if err := s.userStorage.CreateUser(ctx, user); err != nil {
-		return fmt.Errorf("failed to create user error: %w", err)
+		return fmt.Errorf("%s: failed to create user error: %w", errBase, err)
 	}
 
 	return nil

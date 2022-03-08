@@ -13,7 +13,8 @@ const (
 	WrongOneTimeCode
 )
 
-var errorsMap = map[ClientErrorType]ClientError{ // TODO -> slice. Map is not thread safe
+// thread safe, cus nobody writes
+var errorsMap = map[ClientErrorType]ClientError{
 	Common:             errSomethingWentWrong,
 	WrongRequest:       errWrongRequest,
 	WrongAuthorization: errWrongAuthorization,

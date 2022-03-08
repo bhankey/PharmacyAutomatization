@@ -9,6 +9,8 @@ import (
 )
 
 func (r *TokenRepo) GetAllActiveRefreshTokens(ctx context.Context, userID int) ([]entities.RefreshToken, error) {
+	errBase := fmt.Sprintf("tokenrepo.GetAllActiveRefreshTokens(%d)", userID)
+
 	const query = `
 		SELECT id, user_id, refresh_token, user_agent, ip, finger_print, is_available, creation_time
 		FROM refresh_tokens 
@@ -27,7 +29,7 @@ func (r *TokenRepo) GetAllActiveRefreshTokens(ctx context.Context, userID int) (
 	}
 
 	if err := r.slave.SelectContext(ctx, &rows, query, userID); err != nil {
-		return nil, fmt.Errorf("failed to get all refresh tokens: %w", err)
+		return nil, fmt.Errorf("%s: failed to get all refresh tokens: %w", errBase, err)
 	}
 
 	result := make([]entities.RefreshToken, 0, len(rows))

@@ -35,8 +35,7 @@ type Config struct {
 		Level int    `yaml:"level" env:"LOG_LEVEL" env-default:"6"`
 	}
 	Secure struct {
-		JwtKey       string `yaml:"jwt_key" env:"JWT_KEY"`
-		PasswordSalt string `yaml:"password_salt" env:"PASSWORD_SALT"`
+		JwtKey string `yaml:"jwt_key" env:"JWT_KEY"`
 	}
 	SMTP struct {
 		Host     string `yaml:"host" env:"SMTP_HOST"`

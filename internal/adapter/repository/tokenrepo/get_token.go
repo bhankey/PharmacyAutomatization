@@ -12,10 +12,12 @@ import (
 )
 
 func (r *TokenRepo) GetToken(ctx context.Context, refreshToken string) (entities.RefreshToken, error) {
+	errBase := fmt.Sprintf("tokenrepo.GetToken(%s)", refreshToken)
+
 	const query = `
 		SELECT id, user_id, refresh_token, user_agent, ip, finger_print, is_available, creation_time
 		FROM refresh_tokens 
-		WHERE refresh_token = $1
+		WHERE refresh_token = $1 AND is_available = true
 `
 
 	var row struct {
@@ -34,7 +36,7 @@ func (r *TokenRepo) GetToken(ctx context.Context, refreshToken string) (entities
 			return entities.RefreshToken{}, apperror.ErrNoEntity
 		}
 
-		return entities.RefreshToken{}, fmt.Errorf("failed to get refresh token: %w", err)
+		return entities.RefreshToken{}, fmt.Errorf("%s: failed to get refresh token: %w", errBase, err)
 	}
 
 	return entities.RefreshToken{

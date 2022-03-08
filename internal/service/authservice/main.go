@@ -7,20 +7,15 @@ import (
 )
 
 type AuthService struct {
-	userStorage          UserStorage
-	tokenStorage         TokenStorage
-	emailStorage         EmailStorage
-	oneTimesCodesStorage OneTimesCodesStorage
+	userStorage  UserStorage
+	tokenStorage TokenStorage
 
-	passwordSalt string
-	jwtKey       string
+	jwtKey string
 }
 
 type UserStorage interface {
 	GetUserByEmail(ctx context.Context, email string) (entities.User, error)
 	GetUserByID(ctx context.Context, id int) (entities.User, error)
-	CreateUser(ctx context.Context, user entities.User) error
-	UpdatePassword(ctx context.Context, email string, newPasswordHash string) error
 }
 
 type TokenStorage interface {
@@ -30,30 +25,14 @@ type TokenStorage interface {
 	GetToken(ctx context.Context, refreshToken string) (entities.RefreshToken, error)
 }
 
-type EmailStorage interface {
-	SendResetPasswordCode(email string, code string) error
-}
-
-type OneTimesCodesStorage interface {
-	CreateResetPasswordCode(ctx context.Context, email string, code string) error
-	DeleteResetPasswordCode(ctx context.Context, email string) error
-	GetResetPasswordCode(ctx context.Context, email string) (string, error)
-}
-
-func NewUserService(
+func NewAuthService(
 	userStorage UserStorage,
 	tokenStorage TokenStorage,
-	emailStorage EmailStorage,
-	oneTimesCodesStorage OneTimesCodesStorage,
-	passwordSalt string,
 	jwtKey string,
 ) *AuthService {
 	return &AuthService{
-		userStorage:          userStorage,
-		tokenStorage:         tokenStorage,
-		emailStorage:         emailStorage,
-		oneTimesCodesStorage: oneTimesCodesStorage,
-		passwordSalt:         passwordSalt,
-		jwtKey:               jwtKey,
+		userStorage:  userStorage,
+		tokenStorage: tokenStorage,
+		jwtKey:       jwtKey,
 	}
 }

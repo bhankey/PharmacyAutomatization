@@ -1,6 +1,7 @@
 package app
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/bhankey/pharmacy-automatization/internal/config"
@@ -18,11 +19,11 @@ func newSMTPClient(c config.Config) (*mail.SMTPClient, error) {
 	server.KeepAlive = true
 	server.ConnectTimeout = 10 * time.Second // nolint: gomnd
 	server.SendTimeout = 10 * time.Second    // nolint: gomnd
-	// TODO delete Debug: server.TLSConfig = &tls.Config{InsecureSkipVerify: true} // nolint:
+	// Debug: server.TLSConfig = &tls.Config{InsecureSkipVerify: true}
 
 	client, err := server.Connect()
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to connect smtp server: %w", err)
 	}
 
 	return client, nil

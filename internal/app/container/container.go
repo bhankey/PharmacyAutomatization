@@ -14,7 +14,6 @@ type Container struct {
 	smtpClient       *mail.SMTPClient
 	logger           logger.Logger
 
-	passwordSalt    string
 	jwtKey          string
 	smtpMessageFrom string
 
@@ -26,7 +25,6 @@ func NewContainer(
 	masterPostgres, slavePostgres *sqlx.DB,
 	redis *redis.Client,
 	smtpClient *mail.SMTPClient,
-	passwordSalt,
 	jwtKey,
 	smtpMessageFrom string,
 ) *Container {
@@ -36,7 +34,6 @@ func NewContainer(
 		redisConnection:  redis,
 		smtpClient:       smtpClient,
 		logger:           log,
-		passwordSalt:     passwordSalt,
 		jwtKey:           jwtKey,
 		smtpMessageFrom:  smtpMessageFrom,
 		dependencies:     make(map[string]interface{}),

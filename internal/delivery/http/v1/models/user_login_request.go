@@ -26,6 +26,7 @@ type UserLoginRequest struct {
 
 	// password
 	// Required: true
+	// Min Length: 8
 	Password *string `json:"password"`
 }
 
@@ -63,6 +64,10 @@ func (m *UserLoginRequest) validateEmail(formats strfmt.Registry) error {
 func (m *UserLoginRequest) validatePassword(formats strfmt.Registry) error {
 
 	if err := validate.Required("password", "body", m.Password); err != nil {
+		return err
+	}
+
+	if err := validate.MinLength("password", "body", *m.Password, 8); err != nil {
 		return err
 	}
 

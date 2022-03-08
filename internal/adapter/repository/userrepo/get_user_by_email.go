@@ -1,3 +1,4 @@
+// nolint: dupl, nolintlint
 package userrepo
 
 import (
@@ -11,6 +12,8 @@ import (
 )
 
 func (r *UserRepo) GetUserByEmail(ctx context.Context, email string) (entities.User, error) {
+	errBase := fmt.Sprintf("userrepo.GetUserByEmail(%s)", email)
+
 	const query = `
 		SELECT id, name, surname, email, password_hash, default_pharmacy_id
 		FROM users
@@ -32,7 +35,7 @@ func (r *UserRepo) GetUserByEmail(ctx context.Context, email string) (entities.U
 			return entities.User{}, apperror.ErrNoEntity
 		}
 
-		return entities.User{}, fmt.Errorf("failed to get user by email error: %w", err)
+		return entities.User{}, fmt.Errorf("%s: failed to get user by email error: %w", errBase, err)
 	}
 
 	return entities.User{

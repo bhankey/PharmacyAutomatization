@@ -16,9 +16,9 @@ type UserHandler struct {
 }
 
 type UserSrv interface {
-	Login(ctx context.Context, email, password string, identifyData entities.UserIdentifyData) (entities.Tokens, error)
-	RefreshToken(ctx context.Context, refreshToken string, identifyData entities.UserIdentifyData) (entities.Tokens, error)
-	// ResetPassword(ctx context.Context, email, code, newPassword string) error
+	Registry(ctx context.Context, user entities.User) error
+	ResetPassword(ctx context.Context, email, code, newPassword string) error
+	RequestToResetPassword(ctx context.Context, email string) error
 }
 
 func NewUserHandler(baseHandler *deliveryhttp.BaseHandler, userSrv UserSrv) *UserHandler {
@@ -36,7 +36,7 @@ func NewUserHandler(baseHandler *deliveryhttp.BaseHandler, userSrv UserSrv) *Use
 }
 
 func (h *UserHandler) initRoutes(router chi.Router) {
-	router.Post("/login", h.login)
-	router.Post("/refresh", h.refresh)
-	router.Get("/some", h.resetPassword)
+	router.Post("/register", h.register)
+	router.Post("/request_to_change_password", h.requestToChangePassword)
+	router.Post("/change_password", h.changePassword)
 }

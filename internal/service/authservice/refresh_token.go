@@ -14,18 +14,20 @@ func (s *AuthService) RefreshToken(
 	refreshToken string,
 	identifyData entities.UserIdentifyData,
 ) (entities.Tokens, error) {
+	errBase := fmt.Sprintf("authservice.RefreshToken(%s, %v)", refreshToken, identifyData)
+
 	token, err := s.tokenStorage.GetToken(ctx, refreshToken)
 	if err != nil {
 		if errors.Is(err, apperror.ErrNoEntity) {
 			return entities.Tokens{}, apperror.NewClientError(apperror.WrongAuthToken, err)
 		}
 
-		return entities.Tokens{}, fmt.Errorf("failed to get refresh token error: %w", err)
+		return entities.Tokens{}, fmt.Errorf("%s: failed to get refresh token error: %w", errBase, err)
 	}
 
 	user, err := s.userStorage.GetUserByID(ctx, token.UserID)
 	if err != nil {
-		return entities.Tokens{}, fmt.Errorf("failed to get user error: %w", err)
+		return entities.Tokens{}, fmt.Errorf("%s: failed to get user error: %w", errBase, err)
 	}
 
 	accessToken, err := s.createAndSignedToken(user.ID, user.Email, jwtExpireTime)
@@ -35,12 +37,13 @@ func (s *AuthService) RefreshToken(
 
 	newRefreshToken, err := s.createAndSaveRefreshToken(ctx, user.ID, user.Email, identifyData)
 	if err != nil {
-		return entities.Tokens{}, fmt.Errorf("failed to create refresh token error: %w", err)
+		return entities.Tokens{}, fmt.Errorf("%s: failed to create refresh token error: %w", errBase, err)
 	}
 
-	// TODO write wrap to catch panic in gorutine
 	go func() {
-		_ = s.tokenStorage.DeactivateTokenByIDs(ctx, []int{token.ID}) // TODO think about async error handling
+		ctx := context.Background()
+
+		_ = s.tokenStorage.DeactivateTokenByIDs(ctx, []int{token.ID})
 	}()
 
 	return entities.Tokens{

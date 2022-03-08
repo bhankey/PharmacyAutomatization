@@ -9,12 +9,51 @@ import (
 	"github.com/bhankey/pharmacy-automatization/internal/adapter/repository/userrepo"
 	"github.com/bhankey/pharmacy-automatization/internal/delivery/http"
 	"github.com/bhankey/pharmacy-automatization/internal/delivery/http/middleware"
+	"github.com/bhankey/pharmacy-automatization/internal/delivery/http/v1/authhandler"
+	"github.com/bhankey/pharmacy-automatization/internal/delivery/http/v1/swaggerhandler"
 	"github.com/bhankey/pharmacy-automatization/internal/delivery/http/v1/userhandler"
 	"github.com/bhankey/pharmacy-automatization/internal/service/authservice"
+	"github.com/bhankey/pharmacy-automatization/internal/service/userservice"
 )
 
-func (c *Container) GetUserHandler() *userhandler.UserHandler {
-	const key = "UserHandler"
+func (c *Container) GetV1AuthHandler() *authhandler.AuthHandler {
+	const key = "V1AuthHandler"
+
+	dependency, ok := c.dependencies[key]
+	if ok {
+		typedDependency, ok := dependency.(*authhandler.AuthHandler)
+		if ok {
+			return typedDependency
+		}
+	}
+
+	typedDependency := authhandler.NewAuthHandler(c.getBaseHandler(), c.getAuthSrv())
+
+	c.dependencies[key] = typedDependency
+
+	return typedDependency
+}
+
+func (c *Container) GetV1SwaggerHandler() *swaggerhandler.SwaggerHandler {
+	const key = "V1SwaggerHandler"
+
+	dependency, ok := c.dependencies[key]
+	if ok {
+		typedDependency, ok := dependency.(*swaggerhandler.SwaggerHandler)
+		if ok {
+			return typedDependency
+		}
+	}
+
+	typedDependency := swaggerhandler.NewSwaggerHandler(c.getBaseHandler())
+
+	c.dependencies[key] = typedDependency
+
+	return typedDependency
+}
+
+func (c *Container) GetV1UserHandler() *userhandler.UserHandler {
+	const key = "V1UserHandler"
 
 	dependency, ok := c.dependencies[key]
 	if ok {
@@ -49,8 +88,30 @@ func (c *Container) getBaseHandler() *http.BaseHandler {
 	return typedDependency
 }
 
-func (c *Container) getUserSrv() *authservice.AuthService {
+func (c *Container) getUserSrv() *userservice.UserService {
 	const key = "UserSrv"
+
+	dependency, ok := c.dependencies[key]
+	if ok {
+		typedDependency, ok := dependency.(*userservice.UserService)
+		if ok {
+			return typedDependency
+		}
+	}
+
+	typedDependency := userservice.NewUserService(
+		c.getUserStorage(),
+		c.getEmailStorage(),
+		c.getOneTimeCodesPasswordStorage(),
+	)
+
+	c.dependencies[key] = typedDependency
+
+	return typedDependency
+}
+
+func (c *Container) getAuthSrv() *authservice.AuthService {
+	const key = "AuthSrv"
 
 	dependency, ok := c.dependencies[key]
 	if ok {
@@ -60,12 +121,9 @@ func (c *Container) getUserSrv() *authservice.AuthService {
 		}
 	}
 
-	typedDependency := authservice.NewUserService(
+	typedDependency := authservice.NewAuthService(
 		c.getUserStorage(),
 		c.getTokenStorage(),
-		c.getEmailStorage(),
-		c.getOneTimeCodesPasswordStorage(),
-		c.passwordSalt,
 		c.jwtKey,
 	)
 

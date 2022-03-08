@@ -8,9 +8,11 @@ import (
 )
 
 func (r *TokenRepo) CreateRefreshToken(ctx context.Context, token entities.RefreshToken) error {
+	errBase := fmt.Sprintf("tokenrepo.CreateRefreshToken(%v)", token)
+
 	const query = `
 		INSERT INTO refresh_tokens(user_id, refresh_token, user_agent, ip, finger_print)
-							VALUE ($1, $2, $3, $4, $5)
+							VALUES ($1, $2, $3, $4, $5)
 `
 
 	if _, err := r.master.ExecContext(
@@ -22,7 +24,7 @@ func (r *TokenRepo) CreateRefreshToken(ctx context.Context, token entities.Refre
 		token.IP,
 		token.FingerPrint,
 	); err != nil {
-		return fmt.Errorf("failed to insert refresh token: %w", err)
+		return fmt.Errorf("%s: failed to insert refresh token: %w", errBase, err)
 	}
 
 	return nil

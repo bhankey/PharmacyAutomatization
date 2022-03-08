@@ -2,7 +2,6 @@ package authservice
 
 import (
 	"context"
-	"fmt"
 	"time"
 
 	"github.com/bhankey/pharmacy-automatization/internal/entities"
@@ -15,13 +14,9 @@ func (s *AuthService) createAndSaveRefreshToken(
 	email string,
 	identifyData entities.UserIdentifyData,
 ) (string, error) {
-	errorBase := fmt.Sprintf(
-		"userservice.GenerateAndSaveRefreshToken(user_id: %d, email: %s, user_agent: %s, finger_print: %s, ip: %s)",
-		userID, email, identifyData.UserAgent, identifyData.FingerPrint, identifyData.IP)
-
 	signedToken, err := s.createAndSignedToken(userID, email, jwtExpireRefreshTime)
 	if err != nil {
-		return "", fmt.Errorf("%s.createAndSignedToken.error: %w", errorBase, err)
+		return "", err
 	}
 
 	refreshToken := entities.RefreshToken{
@@ -33,7 +28,7 @@ func (s *AuthService) createAndSaveRefreshToken(
 	}
 
 	if err := s.tokenStorage.CreateRefreshToken(ctx, refreshToken); err != nil {
-		return "", fmt.Errorf("%s.CreateRefreshToken.error: %w", errorBase, err)
+		return "", err // nolint: wrapcheck, nolintlint
 	}
 
 	return signedToken, nil
@@ -51,7 +46,7 @@ func (s *AuthService) createAndSignedToken(userID int, email string, ttl time.Du
 
 	signedToken, err := token.SignedString([]byte(s.jwtKey))
 	if err != nil {
-		return "", fmt.Errorf("failed to sign token error: %w", err)
+		return "", err // nolint: wrapcheck, nolintlint
 	}
 
 	return signedToken, nil

@@ -13,7 +13,7 @@ const (
 	WrongOneTimeCode
 )
 
-// thread safe, cus nobody writes
+// thread safe, cus nobody writes.
 var errorsMap = map[ClientErrorType]ClientError{
 	Common:             errSomethingWentWrong,
 	WrongRequest:       errWrongRequest,

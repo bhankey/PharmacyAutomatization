@@ -3,7 +3,6 @@ module github.com/bhankey/pharmacy-automatization
 go 1.17
 
 require (
-	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/go-chi/chi/v5 v5.0.7
 	github.com/go-chi/cors v1.2.0
 	github.com/go-openapi/errors v0.19.9
@@ -11,12 +10,14 @@ require (
 	github.com/go-openapi/swag v0.21.1
 	github.com/go-openapi/validate v0.21.0
 	github.com/go-redis/redis/v8 v8.11.0
+	github.com/golang-jwt/jwt/v4 v4.3.0
 	github.com/ilyakaznacheev/cleanenv v1.2.5
 	github.com/jackc/pgx/v4 v4.12.0
 	github.com/jmoiron/sqlx v1.3.4
 	github.com/joho/godotenv v1.3.0
 	github.com/pborman/uuid v1.2.0
 	github.com/sirupsen/logrus v1.4.2
+	github.com/xhit/go-simple-mail/v2 v2.11.0
 	golang.org/x/crypto v0.0.0-20210616213533-5ff15b29337e
 )
 
@@ -33,6 +34,7 @@ require (
 	github.com/go-openapi/loads v0.21.1 // indirect
 	github.com/go-openapi/spec v0.20.4 // indirect
 	github.com/go-stack/stack v1.8.0 // indirect
+	github.com/go-test/deep v1.0.8 // indirect
 	github.com/google/uuid v1.1.1 // indirect
 	github.com/jackc/chunkreader/v2 v2.0.1 // indirect
 	github.com/jackc/pgconn v1.9.0 // indirect
@@ -47,7 +49,6 @@ require (
 	github.com/mitchellh/mapstructure v1.4.1 // indirect
 	github.com/oklog/ulid v1.3.1 // indirect
 	github.com/toorop/go-dkim v0.0.0-20201103131630-e1cd1a0a5208 // indirect
-	github.com/xhit/go-simple-mail/v2 v2.11.0 // indirect
 	go.mongodb.org/mongo-driver v1.7.5 // indirect
 	golang.org/x/net v0.0.0-20210421230115-4e50805a0758 // indirect
 	golang.org/x/sys v0.0.0-20210615035016-665e8c7367d1 // indirect

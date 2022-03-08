@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"github.com/bhankey/pharmacy-automatization/internal/entities"
-	"github.com/dgrijalva/jwt-go"
+	"github.com/golang-jwt/jwt/v4"
 )
 
 func (s *AuthService) createAndSaveRefreshToken(
@@ -36,9 +36,9 @@ func (s *AuthService) createAndSaveRefreshToken(
 
 func (s *AuthService) createAndSignedToken(userID int, email string, ttl time.Duration) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, &entities.Claims{
-		StandardClaims: jwt.StandardClaims{
-			ExpiresAt: time.Now().Add(ttl).Unix(),
-			IssuedAt:  time.Now().Unix(),
+		RegisteredClaims: jwt.RegisteredClaims{
+			ExpiresAt: jwt.NewNumericDate(time.Now().Add(ttl)),
+			IssuedAt:  jwt.NewNumericDate(time.Now()),
 		},
 		Email:  email,
 		UserID: userID,

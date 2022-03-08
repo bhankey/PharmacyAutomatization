@@ -6,7 +6,7 @@ import (
 
 	"github.com/bhankey/pharmacy-automatization/internal/entities"
 	"github.com/bhankey/pharmacy-automatization/pkg/logger"
-	"github.com/dgrijalva/jwt-go"
+	"github.com/golang-jwt/jwt/v4"
 )
 
 type AuthMiddleware struct {

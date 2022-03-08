@@ -3,11 +3,11 @@ package entities
 import (
 	"time"
 
-	"github.com/dgrijalva/jwt-go"
+	"github.com/golang-jwt/jwt/v4"
 )
 
 type Claims struct {
-	jwt.StandardClaims
+	jwt.RegisteredClaims
 	Email  string `json:"email"`
 	UserID int    `json:"user_id"`
 }

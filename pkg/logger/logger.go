@@ -15,7 +15,7 @@ type Logger struct {
 
 const LogLevel = logrus.DebugLevel
 
-const StandardPermission = 0o666
+const StandardPermission = 0o777
 
 // GetLogger Init initialize logger.
 func GetLogger(logPath string, level int, printLogsToStdOut bool) (Logger, error) {

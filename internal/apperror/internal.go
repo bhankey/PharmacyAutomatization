@@ -1,7 +1,5 @@
-package repository
+package apperror
 
-import (
-	"errors"
-)
+import "errors"
 
 var ErrNoEntity = errors.New("no entity was found")

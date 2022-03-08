@@ -9,13 +9,12 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/bhankey/BD_lab/backend/internal/app/container"
-	configinternal "github.com/bhankey/BD_lab/backend/internal/config"
-	httphandler "github.com/bhankey/BD_lab/backend/internal/delivery/http"
-	"github.com/bhankey/BD_lab/backend/internal/delivery/http/swaggerhandler"
-	"github.com/bhankey/BD_lab/backend/pkg/logger"
+	"github.com/bhankey/pharmacy-automatization/internal/app/container"
+	configinternal "github.com/bhankey/pharmacy-automatization/internal/config"
+	"github.com/bhankey/pharmacy-automatization/internal/delivery/http/middleware"
+	v1 "github.com/bhankey/pharmacy-automatization/internal/delivery/http/v1"
+	"github.com/bhankey/pharmacy-automatization/pkg/logger"
 	"github.com/go-chi/chi/v5"
-	"github.com/go-chi/cors"
 )
 
 type App struct {
@@ -38,45 +37,47 @@ func NewApp(configPath string) (*App, error) {
 	}
 
 	log.Info("try to init data source resource")
-	// TODO remove dataSource struct
-	dataSources, err := newDataSource(config)
+	dataSources, err := newDataSource(config) // TODO remove dataSource struct
 	if err != nil {
 		return nil, err
 	}
 
-	dependencies := container.NewContainer(log, dataSources.db, dataSources.db, dataSources.redisClient)
+	smtp, err := newSMTPClient(config)
+	if err != nil {
+		return nil, err
+	}
 
-	baseHandler := httphandler.NewHandler(log)
+	dependencies := container.NewContainer(
+		log,
+		dataSources.db,
+		dataSources.db,
+		dataSources.redisClient,
+		smtp,
+		config.Secure.JwtKey,
+		config.SMTP.From,
+	)
 
-	swaggerHandler := swaggerhandler.NewSwaggerHandler(baseHandler)
+	mainRouter := chi.NewRouter()
 
-	// TODO move to different package or function
-	router := chi.NewRouter()
-
-	router.Use(cors.Handler(cors.Options{
-		AllowedOrigins:   []string{"https://*", "http://*"},
-		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
-		AllowedHeaders:   []string{"Accept", "Authorization", "Content-Type", "X-CSRF-Token"},
-		ExposedHeaders:   []string{"Link"},
-		AllowCredentials: false,
-	}))
-
-	router.Use(func(handler http.Handler) http.Handler {
-		return httphandler.LoggingMiddleware(log)(handler)
+	mainRouter.Use(func(handler http.Handler) http.Handler {
+		return middleware.LoggingMiddleware(log)(handler)
 	})
+	mainRouter.Use(middleware.FingerPrint)
 
-	router.Mount("/docs", swaggerHandler.Router)
+	v1Router := v1.NewRouter(
+		dependencies.GetV1SwaggerHandler(),
+		dependencies.GetV1AuthHandler(),
+		dependencies.GetV1UserHandler(),
+	)
+
+	mainRouter.Mount("/v1", v1Router)
 
 	server := &http.Server{
 		Addr:    ":" + config.Server.Port,
-		Handler: router,
+		Handler: mainRouter,
 	}
 
-	return &App{
-		logger:    log,
-		server:    server,
-		container: dependencies,
-	}, nil
+	return &App{logger: log, server: server, container: dependencies}, nil
 }
 
 func (a *App) Start() {

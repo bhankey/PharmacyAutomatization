@@ -4,8 +4,8 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/bhankey/BD_lab/backend/internal/config"
-	"github.com/bhankey/BD_lab/backend/pkg/postgresdb"
+	"github.com/bhankey/pharmacy-automatization/internal/config"
+	"github.com/bhankey/pharmacy-automatization/pkg/postgresdb"
 	"github.com/go-redis/redis/v8"
 	"github.com/jmoiron/sqlx"
 )

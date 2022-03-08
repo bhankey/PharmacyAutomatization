@@ -16,3 +16,6 @@ redis:
 logger:
   path: "./logs/logs.log"
   level: 6
+secure:
+  jwt_key: "someSecureKey"
+  password_salt: "someSecureSalt"

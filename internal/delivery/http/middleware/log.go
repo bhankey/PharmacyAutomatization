@@ -1,11 +1,13 @@
-package http
+package middleware
 
 import (
+	"context"
 	"net/http"
 	"runtime/debug"
 	"time"
 
-	"github.com/bhankey/BD_lab/backend/pkg/logger"
+	"github.com/bhankey/pharmacy-automatization/internal/entities"
+	"github.com/bhankey/pharmacy-automatization/pkg/logger"
 	"github.com/pborman/uuid"
 	"github.com/sirupsen/logrus"
 )
@@ -38,6 +40,10 @@ func LoggingMiddleware(logger logger.Logger) func(http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		requestID := uuid.NewUUID().String()
 		f := func(w http.ResponseWriter, r *http.Request) {
+			ctx := r.Context()
+			ctx = context.WithValue(ctx, entities.RequestID, requestID)
+			r = r.WithContext(ctx)
+
 			defer func() {
 				if err := recover(); err != nil {
 					w.WriteHeader(http.StatusInternalServerError)
@@ -63,11 +69,7 @@ func LoggingMiddleware(logger logger.Logger) func(http.Handler) http.Handler {
 				"request_id": requestID,
 			})
 
-			if wrapped.Status() != http.StatusOK {
-				log.Error("request")
-			} else {
-				log.Info("request")
-			}
+			log.Info("request")
 		}
 
 		return http.HandlerFunc(f)

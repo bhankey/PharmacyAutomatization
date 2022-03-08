@@ -25,3 +25,5 @@ out
 gen
 *.env
 logs
+
+./config/

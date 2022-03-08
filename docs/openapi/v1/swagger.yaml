@@ -1,4 +1,4 @@
-swagger: "3.0"
+swagger: "2.0"
 info:
   description: Pharmacy
   title: Pharmacy
@@ -12,29 +12,123 @@ schemes:
 tags:
   - name: payments
     description: Payments
-  - name: account
-    description: User bank account
-  - name: report
-    description: report
+  - name: user
+    description: User of system
+  - name: auth
+    description: Auth
 paths:
-  /health: # TODO delete when other endpoints appear
+  /auth/login:
     post:
       tags:
-        - payments
+        - auth
       parameters:
         - in: body
           name: body
           schema:
-            $ref: '#/definitions/BaseResponse'
+            $ref: '#/definitions/UserLoginRequest'
       responses:
         200:
-          description: OK
+          description: login success
           schema:
             $ref: '#/definitions/BaseResponse'
-        400:
-          description: Failed
+        401:
+          description: failed to authorize
           schema:
             $ref: '#/definitions/BaseResponse'
+        500:
+          description: internal server error
+          schema:
+            $ref: '#/definitions/BaseResponse'
+  /auth/refresh:
+    post:
+      tags:
+        - auth
+      parameters:
+        - in: body
+          name: body
+          schema:
+            $ref: '#/definitions/UserRefreshRequest'
+      responses:
+        200:
+          description: refresh success
+          schema:
+            $ref: '#/definitions/BaseResponse'
+        401:
+          description: failed to refresh
+          schema:
+            $ref: '#/definitions/BaseResponse'
+        500:
+          description: internal server error
+          schema:
+            $ref: '#/definitions/BaseResponse'
+
+  /user/register:
+    post:
+      tags:
+        - user
+      parameters:
+        - in: body
+          name: body
+          schema:
+            $ref: '#/definitions/RegisterRequest'
+      responses:
+        200:
+          description: ok
+          schema:
+            $ref: '#/definitions/BaseResponse'
+        401:
+          description: failed
+          schema:
+            $ref: '#/definitions/BaseResponse'
+        500:
+          description: internal server error
+          schema:
+            $ref: '#/definitions/BaseResponse'
+  /user/request_to_change_password:
+    post:
+      tags:
+        - user
+      parameters:
+        - in: body
+          name: body
+          schema:
+            $ref: '#/definitions/RequestPasswordChangeRequest'
+      responses:
+        200:
+          description: ok
+          schema:
+            $ref: '#/definitions/BaseResponse'
+        401:
+          description: failed
+          schema:
+            $ref: '#/definitions/BaseResponse'
+        500:
+          description: internal server error
+          schema:
+            $ref: '#/definitions/BaseResponse'
+  /user/change_password:
+    post:
+      tags:
+        - user
+      parameters:
+        - in: body
+          name: body
+          schema:
+            $ref: '#/definitions/PasswordChangeRequest'
+      responses:
+        200:
+          description: ok
+          schema:
+            $ref: '#/definitions/BaseResponse'
+        401:
+          description: failed
+          schema:
+            $ref: '#/definitions/BaseResponse'
+        500:
+          description: internal server error
+          schema:
+            $ref: '#/definitions/BaseResponse'
+
 
 definitions:
   BaseResponse:
@@ -46,3 +140,66 @@ definitions:
       success:
         type: boolean
         x-omitempty: false
+
+  UserLoginRequest:
+    type: object
+    required:
+      - email
+      - password
+    properties:
+      email:
+        type: string
+        format: email
+      password:
+        type: string
+        minLength: 8
+
+  UserRefreshRequest:
+    type: object
+    required:
+      - token
+    properties:
+      token:
+        type: string
+
+  RegisterRequest:
+    type: object
+    required:
+      - email
+      - password
+    properties:
+      name:
+        type: string
+      surname:
+        type: string
+      email:
+        type: string
+        format: email
+      password:
+        type: string
+        minLength: 8
+
+  RequestPasswordChangeRequest:
+    type: object
+    required:
+      - email
+    properties:
+      email:
+        type: string
+        format: email
+
+  PasswordChangeRequest:
+    type: object
+    required:
+      - email
+      - code
+      - new_password
+    properties:
+      email:
+        type: string
+        format: email
+      code:
+        type: string
+      new_password:
+        type: string
+        minLength: 8

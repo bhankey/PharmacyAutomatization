@@ -34,6 +34,16 @@ type Config struct {
 		Path  string `yaml:"path" env:"LOG_PATH" env-default:"./logs/logs.log"`
 		Level int    `yaml:"level" env:"LOG_LEVEL" env-default:"6"`
 	}
+	Secure struct {
+		JwtKey string `yaml:"jwt_key" env:"JWT_KEY"`
+	}
+	SMTP struct {
+		Host     string `yaml:"host" env:"SMTP_HOST"`
+		Port     int    `yaml:"port" env:"SMTP_PORT"`
+		User     string `yaml:"user" env:"SMTP_USER"`
+		Password string `yaml:"password" env:"SMTP_PASSWORD"`
+		From     string `yaml:"from" env:"SMTP_FROM"`
+	}
 }
 
 // GetConfig return pointer to config. Config is singleton.

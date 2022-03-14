@@ -15,8 +15,9 @@ CREATE TABLE IF NOT EXISTS addresses (
 
 CREATE TABLE IF NOT EXISTS pharmacy (
         id serial NOT NULL PRIMARY KEY,
-        address_id int NOT NULL REFERENCES addresses(id),
-        name text NOT NULL,
+        address_id int UNIQUE NOT NULL REFERENCES addresses(id),
+        name text UNIQUE NOT NULL,
+        is_blocked bool NOT NULL DEFAULT false,
         creation_time timestamp NOT NULL DEFAULT NOW(),
         update_time timestamp NOT NULL DEFAULT NOW()
 );
@@ -27,6 +28,7 @@ CREATE TRIGGER update_pharmacy_time BEFORE UPDATE
 
 CREATE TABLE IF NOT EXISTS  rights(
         id serial NOT NULL PRIMARY KEY,
+        name text UNIQUE NOT NULL,
         comment text NOT NULL DEFAULT '',
         creation_time timestamp NOT NULL DEFAULT NOW(),
         update_time timestamp NOT NULL DEFAULT NOW()
@@ -37,11 +39,14 @@ CREATE TRIGGER update_rights_update_time BEFORE UPDATE
     ON rights FOR EACH ROW EXECUTE PROCEDURE
     update_time_column();
 
+CREATE TYPE roles AS ENUM ('admin', 'apothecary');
+
 CREATE TABLE IF NOT EXISTS users (
         id serial NOT NULL PRIMARY KEY,
         name text NOT NULL DEFAULT '',
         surname text NOT NULL DEFAULT '',
         email text UNIQUE NOT NULL DEFAULT '',
+        role ROLES NOT NULL DEFAULT 'apothecary',
         password_hash text NOT NULL,
         use_ip_check bool NOT NULL DEFAULT true,
         default_pharmacy_id int REFERENCES pharmacy(id),
@@ -73,6 +78,7 @@ CREATE TRIGGER update_users_rights_update_time BEFORE UPDATE
 
 CREATE TABLE IF NOT EXISTS rights_group (
         id serial PRIMARY KEY NOT NULL,
+        name text UNIQUE NOT NULL,
         rights int[] NOT NULL DEFAULT '{}'::int[],
         last_edit_user int NOT NULL,
         creation_time timestamp NOT NULL DEFAULT NOW(),
@@ -85,6 +91,7 @@ CREATE TRIGGER update_rights_group_update_time BEFORE UPDATE
 
 CREATE TABLE IF NOT EXISTS product (
         id serial NOT NULL PRIMARY KEY,
+        name text UNIQUE NOT NULL,
         price int NOT NULL,
         expiration_date interval NOT NULL,
         instruction_url text NOT NULL DEFAULT '',

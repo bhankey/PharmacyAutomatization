@@ -26,5 +26,5 @@ func NewSwaggerHandler(baseHandler *deliveryhttp.BaseHandler) *SwaggerHandler {
 
 func initRoutes(router chi.Router) {
 	fs := http.FileServer(http.Dir("./docs/openapi/v1"))
-	router.Handle("/*", http.StripPrefix("/docs/openapi/v1", fs))
+	router.Handle("/*", http.StripPrefix("/v1/docs/", fs))
 }

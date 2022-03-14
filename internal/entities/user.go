@@ -7,6 +7,7 @@ type User struct {
 	Email             string
 	Password          string
 	PasswordHash      string
+	Role              string
 	DefaultPharmacyID int
 }
 

@@ -30,12 +30,12 @@ func (s *AuthService) RefreshToken(
 		return entities.Tokens{}, fmt.Errorf("%s: failed to get user error: %w", errBase, err)
 	}
 
-	accessToken, err := s.createAndSignedToken(user.ID, user.Email, jwtExpireTime)
+	accessToken, err := s.createAndSignedToken(user.ID, user.Email, user.Role, jwtExpireTime)
 	if err != nil {
 		return entities.Tokens{}, fmt.Errorf("failed to create access token error: %w", err)
 	}
 
-	newRefreshToken, err := s.createAndSaveRefreshToken(ctx, user.ID, user.Email, identifyData)
+	newRefreshToken, err := s.createAndSaveRefreshToken(ctx, user.ID, user.Email, user.Role, identifyData)
 	if err != nil {
 		return entities.Tokens{}, fmt.Errorf("%s: failed to create refresh token error: %w", errBase, err)
 	}

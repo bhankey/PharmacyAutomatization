@@ -5,7 +5,11 @@ import (
 	"fmt"
 )
 
-func (r *Repository) CreateReceipt(ctx context.Context, userID, pharmacyID, sum, discount int, purchaseUUID string) (int, error) {
+func (r *Repository) CreateReceipt(
+	ctx context.Context,
+	userID, pharmacyID, sum, discount int,
+	purchaseUUID string,
+) (int, error) {
 	errBase := fmt.Sprintf("receiptrepo.CreateReceipt(%d, %d, %d, %d)", userID, pharmacyID, sum, discount)
 
 	const query string = `

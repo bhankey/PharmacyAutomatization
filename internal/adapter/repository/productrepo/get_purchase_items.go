@@ -7,7 +7,11 @@ import (
 	"github.com/bhankey/pharmacy-automatization/internal/entities"
 )
 
-func (r *Repository) GetPurchaseProducts(ctx context.Context, pharmacyID int, purchaseUUID string) ([]entities.PurchaseProductItem, error) {
+func (r *Repository) GetPurchaseProducts(
+	ctx context.Context,
+	pharmacyID int,
+	purchaseUUID string,
+) ([]entities.PurchaseProductItem, error) {
 	errBase := fmt.Sprintf("pharmacyrepo.GetAvailablePharmacyProducts(%d)", pharmacyID)
 
 	const query = `

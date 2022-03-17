@@ -3,8 +3,9 @@ package purchaseservice
 import (
 	"context"
 	"fmt"
-	"github.com/bhankey/pharmacy-automatization/internal/entities"
 	"math"
+
+	"github.com/bhankey/pharmacy-automatization/internal/entities"
 )
 
 func (s *Service) GetPurchase(ctx context.Context, pharmacyID int, purchaseUUID string, isSocialCard bool) (entities.Purchase, error) {

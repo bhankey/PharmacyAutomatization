@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+
 	"github.com/bhankey/pharmacy-automatization/internal/entities"
 )
 

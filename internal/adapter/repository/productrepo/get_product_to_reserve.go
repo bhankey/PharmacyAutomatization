@@ -7,12 +7,25 @@ import (
 	"github.com/bhankey/pharmacy-automatization/internal/entities"
 )
 
-// TODO refactor. Don't like way of working with products
-func (r *Repository) GetProductToReserve(ctx context.Context, productName string, position string) (entities.ProductItem, error) {
+// TODO refactor. Don't like way of working with products.
+func (r *Repository) GetProductToReserve(
+	ctx context.Context,
+	productName string,
+	position string,
+) (entities.ProductItem, error) {
 	errBase := fmt.Sprintf("productrepo.GetProductToReserve(%s, %s)", productName, position)
 
 	const query = `
-		SELECT id, product_id, receipt_id, pharmacy_id, position, manufactured_time, reservation, is_sold, is_expired, priority
+		SELECT id,
+		       product_id,
+		       receipt_id,
+		       pharmacy_id,
+		       position,
+		       manufactured_time,
+		       reservation,
+		       is_sold, 
+		       is_expired,
+		       priority
 		FROM product_item INNER JOIN product ON product_item.product_id = product.id
 		WHERE product.name = $1 	
 		  AND product_item.position = $2

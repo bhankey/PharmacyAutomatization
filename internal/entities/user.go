@@ -7,7 +7,7 @@ type User struct {
 	Email             string
 	Password          string
 	PasswordHash      string
-	Role              string
+	Role              Role
 	DefaultPharmacyID int
 }
 
@@ -17,3 +17,12 @@ type UserIdentifyData struct {
 	UserAgent   string
 	FingerPrint string
 }
+
+type Role string
+
+const (
+	// All use only for access. Don't save in DB this value
+	All        Role = "all"
+	Admin      Role = "admin"
+	Apothecary Role = "apothecary"
+)

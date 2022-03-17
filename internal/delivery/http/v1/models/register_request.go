@@ -19,6 +19,9 @@ import (
 // swagger:model RegisterRequest
 type RegisterRequest struct {
 
+	// default pharmacy name
+	DefaultPharmacyName string `json:"default_pharmacy_name,omitempty"`
+
 	// email
 	// Required: true
 	// Format: email

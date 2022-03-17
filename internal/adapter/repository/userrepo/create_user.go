@@ -7,12 +7,12 @@ import (
 	"github.com/bhankey/pharmacy-automatization/internal/entities"
 )
 
-func (r *UserRepo) CreateUser(ctx context.Context, user entities.User) error {
+func (r *Repository) CreateUser(ctx context.Context, user entities.User) error {
 	errBase := fmt.Sprintf("userrepo.CreateUser(%v)", user)
 
 	const query = `
-		INSERT INTO users(name, surname, email, password_hash)
-							VALUES ($1, $2, $3, $4)
+		INSERT INTO users(name, surname, email, role, password_hash)
+							VALUES ($1, $2, $3, $4, $5)
 `
 
 	if _, err := r.master.ExecContext(
@@ -21,6 +21,7 @@ func (r *UserRepo) CreateUser(ctx context.Context, user entities.User) error {
 		user.Name,
 		user.Surname,
 		user.Email,
+		user.Role,
 		user.PasswordHash,
 	); err != nil {
 		return fmt.Errorf("%s: failed to create user: %w", errBase, err)

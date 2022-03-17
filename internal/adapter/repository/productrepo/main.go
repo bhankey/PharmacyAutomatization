@@ -1,4 +1,4 @@
-package userrepo
+package productrepo
 
 import "github.com/jmoiron/sqlx"
 
@@ -7,7 +7,7 @@ type Repository struct {
 	slave  *sqlx.DB
 }
 
-func NewUserRepo(master *sqlx.DB, slave *sqlx.DB) *Repository {
+func NewProductRepo(master *sqlx.DB, slave *sqlx.DB) *Repository {
 	return &Repository{
 		master: master,
 		slave:  slave,

@@ -5,7 +5,7 @@ import (
 	"fmt"
 )
 
-func (r *UserRepo) UpdatePassword(ctx context.Context, email string, newPasswordHash string) error {
+func (r *Repository) UpdatePassword(ctx context.Context, email string, newPasswordHash string) error {
 	errBase := fmt.Sprintf("userrepo.UpdatePassword(%s, %s)", email, newPasswordHash)
 
 	const query = `

@@ -132,12 +132,12 @@ func (c *Container) getAuthSrv() *authservice.AuthService {
 	return typedDependency
 }
 
-func (c *Container) getUserStorage() *userrepo.UserRepo {
+func (c *Container) getUserStorage() *userrepo.Repository {
 	const key = "UserStorage"
 
 	dependency, ok := c.dependencies[key]
 	if ok {
-		typedDependency, ok := dependency.(*userrepo.UserRepo)
+		typedDependency, ok := dependency.(*userrepo.Repository)
 		if ok {
 			return typedDependency
 		}

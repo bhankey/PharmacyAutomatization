@@ -16,6 +16,8 @@ type UserStorage interface {
 	GetUserByEmail(ctx context.Context, email string) (entities.User, error)
 	CreateUser(ctx context.Context, user entities.User) error
 	UpdatePassword(ctx context.Context, email string, newPasswordHash string) error
+	GetBatchOfUsers(ctx context.Context, lastClientID int, limit int) ([]entities.User, error)
+	UpdateUser(ctx context.Context, user entities.User) error
 }
 
 type EmailStorage interface {

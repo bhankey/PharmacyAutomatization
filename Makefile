@@ -4,10 +4,7 @@ build:
 	go mod download && go build -o ./server ./cmd/server/main.go
 
 docker:
-	docker-compose up
-
-migrations-up:
-	docker-compose up migrations
+	docker-compose -f .build/docker-compose.yaml up
 
 migrations-down:
 	MIGRATIONS_STATUS=down docker-compose -f docker-compose-down-migrations.yaml up

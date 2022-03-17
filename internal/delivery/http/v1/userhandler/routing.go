@@ -19,6 +19,8 @@ type UserSrv interface {
 	Registry(ctx context.Context, user entities.User) error
 	ResetPassword(ctx context.Context, email, code, newPassword string) error
 	RequestToResetPassword(ctx context.Context, email string) error
+	UpdateUser(ctx context.Context, user entities.User) error
+	GetBatchOfUsers(ctx context.Context, lastClientID int, limit int) ([]entities.User, error)
 }
 
 func NewUserHandler(baseHandler *deliveryhttp.BaseHandler, userSrv UserSrv) *UserHandler {
@@ -39,4 +41,6 @@ func (h *UserHandler) initRoutes(router chi.Router) {
 	router.Post("/register", h.register)
 	router.Post("/request_to_change_password", h.requestToChangePassword)
 	router.Post("/change_password", h.changePassword)
+	router.Get("/all", h.getAll)
+	router.Get("/update", h.update)
 }

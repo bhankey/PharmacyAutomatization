@@ -11,11 +11,11 @@ import (
 	"github.com/bhankey/pharmacy-automatization/internal/entities"
 )
 
-func (r *UserRepo) GetUserByID(ctx context.Context, id int) (entities.User, error) {
+func (r *Repository) GetUserByID(ctx context.Context, id int) (entities.User, error) {
 	errBase := fmt.Sprintf("userrepo.GetUserByID(%d)", id)
 
 	const query = `
-		SELECT id, name, surname, email, password_hash, default_pharmacy_id
+		SELECT id, name, surname, email, password_hash, role, default_pharmacy_id
 		FROM users
 		WHERE id = $1
 `
@@ -25,6 +25,7 @@ func (r *UserRepo) GetUserByID(ctx context.Context, id int) (entities.User, erro
 		Name              string        `db:"name"`
 		Surname           string        `json:"surname"`
 		Email             string        `db:"email"`
+		Role              string        `db:"role"`
 		PasswordHash      string        `db:"password_hash"`
 		DefaultPharmacyID sql.NullInt64 `db:"default_pharmacy_id"`
 	}{}

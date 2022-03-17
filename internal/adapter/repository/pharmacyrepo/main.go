@@ -1,4 +1,4 @@
-package userrepo
+package pharmacyrepo
 
 import "github.com/jmoiron/sqlx"
 
@@ -7,7 +7,7 @@ type Repository struct {
 	slave  *sqlx.DB
 }
 
-func NewUserRepo(master *sqlx.DB, slave *sqlx.DB) *Repository {
+func NewPharmacyRepo(master *sqlx.DB, slave *sqlx.DB) *Repository {
 	return &Repository{
 		master: master,
 		slave:  slave,

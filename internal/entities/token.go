@@ -10,7 +10,7 @@ type Claims struct {
 	jwt.RegisteredClaims
 	Email  string `json:"email"`
 	UserID int    `json:"user_id"`
-	Role   string `json:"role"`
+	Role   Role   `json:"role"`
 }
 
 type Tokens struct {

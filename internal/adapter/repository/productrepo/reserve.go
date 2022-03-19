@@ -12,7 +12,6 @@ func (r *Repository) Reserve(ctx context.Context, productID int, purchaseUUID st
 		UPDATE product_item 
 		SET reservation = $1
 		WHERE id = $2
-		LIMIT 1
 `
 	if _, err := r.master.ExecContext(
 		ctx,

@@ -7,6 +7,13 @@ import (
 )
 
 func (s *Service) CreatePharmacy(ctx context.Context, pharmacy entities.Pharmacy) error {
+	var err error
+
+	pharmacy.Address.ID, err = s.addressRepo.CreateAddress(ctx, pharmacy.Address)
+	if err != nil {
+		return err
+	}
+
 	return s.pharmacyRepo.CreatePharmacy(ctx, pharmacy)
 }
 

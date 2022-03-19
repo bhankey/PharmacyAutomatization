@@ -24,7 +24,7 @@ func (s *Service) ConfirmPurchase(ctx context.Context, userID, pharmacyID int, p
 		discount = int(math.Floor(float64(sum) * 0.05))
 	}
 
-	receiptID, err := s.receiptRepo.CreateReceipt(ctx, userID, pharmacyID, sum, discount)
+	receiptID, err := s.receiptRepo.CreateReceipt(ctx, userID, pharmacyID, sum, discount, purchaseUUID)
 	if err != nil {
 		return fmt.Errorf("%s: failed to create receipt: %w", errBase, err)
 	}

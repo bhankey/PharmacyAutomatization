@@ -15,9 +15,10 @@ func (r *Repository) CreateReceipt(
 	const query string = `
 		INSERT INTO receipt(user_id, pharmacy_id, sum, discount, purchase_uuid)
 					VALUES ($1, $2, $3, $4, $5)
+		RETURNING id
 `
-
-	res, err := r.master.ExecContext(
+	var ID int
+	err := r.master.QueryRowContext(
 		ctx,
 		query,
 		userID,
@@ -25,15 +26,10 @@ func (r *Repository) CreateReceipt(
 		sum,
 		discount,
 		purchaseUUID,
-	)
+	).Scan(&ID)
 	if err != nil {
 		return 0, fmt.Errorf("%s: QueryError: %w", errBase, err)
 	}
 
-	ID, err := res.LastInsertId()
-	if err != nil {
-		return 0, fmt.Errorf("%s: LastInsertID.Error: %w", errBase, err)
-	}
-
-	return int(ID), nil
+	return ID, nil
 }

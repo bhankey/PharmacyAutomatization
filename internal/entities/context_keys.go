@@ -7,4 +7,5 @@ const (
 	Email
 	DeviceFingerPrint
 	RequestID
+	PharmacyID
 )

@@ -1,6 +1,14 @@
 package container
 
 import (
+	"github.com/bhankey/pharmacy-automatization/internal/adapter/repository/addressrepo"
+	"github.com/bhankey/pharmacy-automatization/internal/adapter/repository/pharmacyrepo"
+	"github.com/bhankey/pharmacy-automatization/internal/adapter/repository/productrepo"
+	"github.com/bhankey/pharmacy-automatization/internal/adapter/repository/receiptrepo"
+	"github.com/bhankey/pharmacy-automatization/internal/delivery/http/v1/pharmacyhandler"
+	"github.com/bhankey/pharmacy-automatization/internal/delivery/http/v1/purchasehandler"
+	"github.com/bhankey/pharmacy-automatization/internal/service/pharmacyservice"
+	"github.com/bhankey/pharmacy-automatization/internal/service/purchaseservice"
 	"time"
 
 	"github.com/bhankey/pharmacy-automatization/internal/adapter/repository/emailrepo"
@@ -63,7 +71,43 @@ func (c *Container) GetV1UserHandler() *userhandler.UserHandler {
 		}
 	}
 
-	typedDependency := userhandler.NewUserHandler(c.getBaseHandler(), c.getUserSrv())
+	typedDependency := userhandler.NewUserHandler(c.getBaseHandler(), c.getUserSrv(), c.GetAuthMiddleware())
+
+	c.dependencies[key] = typedDependency
+
+	return typedDependency
+}
+
+func (c *Container) GetV1PharmacyHandler() *pharmacyhandler.Handler {
+	const key = "V1PharmacyHandler"
+
+	dependency, ok := c.dependencies[key]
+	if ok {
+		typedDependency, ok := dependency.(*pharmacyhandler.Handler)
+		if ok {
+			return typedDependency
+		}
+	}
+
+	typedDependency := pharmacyhandler.NewPharmacyHandler(c.getBaseHandler(), c.getPharmacyService(), c.GetAuthMiddleware())
+
+	c.dependencies[key] = typedDependency
+
+	return typedDependency
+}
+
+func (c *Container) GetV1PurchaseHandler() *purchasehandler.Handler {
+	const key = "V1PurchaseHandler"
+
+	dependency, ok := c.dependencies[key]
+	if ok {
+		typedDependency, ok := dependency.(*purchasehandler.Handler)
+		if ok {
+			return typedDependency
+		}
+	}
+
+	typedDependency := purchasehandler.NewPurchaseHandler(c.getBaseHandler(), c.getPurchaseService(), c.GetAuthMiddleware())
 
 	c.dependencies[key] = typedDependency
 
@@ -180,6 +224,114 @@ func (c *Container) getEmailStorage() *emailrepo.EmailRepo {
 	}
 
 	typedDependency := emailrepo.NewEmailRepo(c.smtpClient, c.smtpMessageFrom)
+
+	c.dependencies[key] = typedDependency
+
+	return typedDependency
+}
+
+func (c *Container) getAddressStorage() *addressrepo.Repository {
+	const key = "AddressStorage"
+
+	dependency, ok := c.dependencies[key]
+	if ok {
+		typedDependency, ok := dependency.(*addressrepo.Repository)
+		if ok {
+			return typedDependency
+		}
+	}
+
+	typedDependency := addressrepo.NewAddressRepo(c.masterPostgresDB, c.slavePostgresDB)
+
+	c.dependencies[key] = typedDependency
+
+	return typedDependency
+}
+
+func (c *Container) getProductStorage() *productrepo.Repository {
+	const key = "ProductStorage"
+
+	dependency, ok := c.dependencies[key]
+	if ok {
+		typedDependency, ok := dependency.(*productrepo.Repository)
+		if ok {
+			return typedDependency
+		}
+	}
+
+	typedDependency := productrepo.NewProductRepo(c.masterPostgresDB, c.slavePostgresDB)
+
+	c.dependencies[key] = typedDependency
+
+	return typedDependency
+}
+
+func (c *Container) getReceiptStorage() *receiptrepo.Repository {
+	const key = "ProductStorage"
+
+	dependency, ok := c.dependencies[key]
+	if ok {
+		typedDependency, ok := dependency.(*receiptrepo.Repository)
+		if ok {
+			return typedDependency
+		}
+	}
+
+	typedDependency := receiptrepo.NewReceiptRepo(c.masterPostgresDB, c.slavePostgresDB)
+
+	c.dependencies[key] = typedDependency
+
+	return typedDependency
+}
+
+func (c *Container) getPharmacyStorage() *pharmacyrepo.Repository {
+	const key = "PharmacyStorage"
+
+	dependency, ok := c.dependencies[key]
+	if ok {
+		typedDependency, ok := dependency.(*pharmacyrepo.Repository)
+		if ok {
+			return typedDependency
+		}
+	}
+
+	typedDependency := pharmacyrepo.NewPharmacyRepo(c.masterPostgresDB, c.slavePostgresDB)
+
+	c.dependencies[key] = typedDependency
+
+	return typedDependency
+}
+
+func (c *Container) getPharmacyService() *pharmacyservice.Service {
+	const key = "PharmacyService"
+
+	dependency, ok := c.dependencies[key]
+	if ok {
+		typedDependency, ok := dependency.(*pharmacyservice.Service)
+		if ok {
+			return typedDependency
+		}
+	}
+
+	typedDependency := pharmacyservice.NewPharmacyService(c.getPharmacyStorage(), c.getAddressStorage())
+
+	c.dependencies[key] = typedDependency
+
+	return typedDependency
+}
+
+func (c *Container) getPurchaseService() *purchaseservice.Service {
+	const key = "PurchaseService"
+
+	dependency, ok := c.dependencies[key]
+	if ok {
+		typedDependency, ok := dependency.(*purchaseservice.Service)
+		if ok {
+			return typedDependency
+		}
+	}
+
+	typedDependency := purchaseservice.NewPurchaseService(c.getProductStorage(), c.getReceiptStorage())
 
 	c.dependencies[key] = typedDependency
 

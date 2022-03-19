@@ -2,6 +2,7 @@ package productrepo
 
 import (
 	"context"
+	"database/sql"
 	"fmt"
 
 	"github.com/bhankey/pharmacy-automatization/internal/entities"
@@ -16,7 +17,7 @@ func (r *Repository) GetProductToReserve(
 	errBase := fmt.Sprintf("productrepo.GetProductToReserve(%s, %s)", productName, position)
 
 	const query = `
-		SELECT id,
+		SELECT product_item.id as id,
 		       product_id,
 		       receipt_id,
 		       pharmacy_id,
@@ -38,16 +39,16 @@ func (r *Repository) GetProductToReserve(
 `
 
 	row := struct {
-		ID               int    `db:"id"`
-		ProductID        int    `db:"product_id"`
-		PharmacyID       int    `db:"pharmacy_id"`
-		ReceiptID        int    `db:"receipt_id"`
-		Position         string `db:"position"`
-		ManufacturedTime string `db:"manufactured_time"`
-		ReservationUUID  string `db:"reservation_uuid"`
-		IsSold           bool   `db:"is_sold"`
-		IsExpired        bool   `db:"is_expired"`
-		Priority         int    `db:"priority"`
+		ID               int            `db:"id"`
+		ProductID        int            `db:"product_id"`
+		PharmacyID       int            `db:"pharmacy_id"`
+		ReceiptID        sql.NullInt64  `db:"receipt_id"`
+		Position         string         `db:"position"`
+		ManufacturedTime string         `db:"manufactured_time"`
+		ReservationUUID  sql.NullString `db:"reservation"`
+		IsSold           bool           `db:"is_sold"`
+		IsExpired        bool           `db:"is_expired"`
+		Priority         int            `db:"priority"`
 	}{}
 
 	if err := r.master.GetContext(ctx, &row, query, productName, position); err != nil {
@@ -58,10 +59,10 @@ func (r *Repository) GetProductToReserve(
 		ID:               row.ID,
 		ProductID:        row.ProductID,
 		PharmacyID:       row.PharmacyID,
-		ReceiptID:        row.ReceiptID,
+		ReceiptID:        int(row.ReceiptID.Int64),
 		Position:         row.Position,
 		ManufacturedTime: row.ManufacturedTime,
-		ReservationUUID:  row.ReservationUUID,
+		ReservationUUID:  row.ReservationUUID.String,
 		IsSold:           row.IsSold,
 		IsExpired:        row.IsExpired,
 		Priority:         row.Priority,

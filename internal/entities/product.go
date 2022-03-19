@@ -28,7 +28,7 @@ type ProductItem struct {
 
 type PharmacyProductItem struct {
 	Name           string
-	Price          string
+	Price          int
 	InstructionURL string
 	ImgURL         string
 	Comment        string

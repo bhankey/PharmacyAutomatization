@@ -21,6 +21,9 @@ type Pharmacy struct {
 	// address
 	Address *Address `json:"address,omitempty"`
 
+	// id
+	ID int64 `json:"id"`
+
 	// name
 	Name string `json:"name"`
 }

@@ -2,6 +2,7 @@ package userhandler
 
 import (
 	"context"
+	"github.com/bhankey/pharmacy-automatization/internal/delivery/http/middleware"
 
 	deliveryhttp "github.com/bhankey/pharmacy-automatization/internal/delivery/http"
 	"github.com/bhankey/pharmacy-automatization/internal/entities"
@@ -23,7 +24,7 @@ type UserSrv interface {
 	GetBatchOfUsers(ctx context.Context, lastClientID int, limit int) ([]entities.User, error)
 }
 
-func NewUserHandler(baseHandler *deliveryhttp.BaseHandler, userSrv UserSrv) *UserHandler {
+func NewUserHandler(baseHandler *deliveryhttp.BaseHandler, userSrv UserSrv, authMiddleware *middleware.AuthMiddleware) *UserHandler {
 	router := chi.NewRouter()
 
 	handler := &UserHandler{
@@ -32,12 +33,14 @@ func NewUserHandler(baseHandler *deliveryhttp.BaseHandler, userSrv UserSrv) *Use
 		BaseHandler: baseHandler,
 	}
 
-	handler.initRoutes(router)
+	handler.initRoutes(router, authMiddleware)
 
 	return handler
 }
 
-func (h *UserHandler) initRoutes(router chi.Router) {
+func (h *UserHandler) initRoutes(router chi.Router, authMiddleware *middleware.AuthMiddleware) {
+	router.Use(authMiddleware.Middleware)
+
 	router.Post("/register", h.register)
 	router.Post("/request_to_change_password", h.requestToChangePassword)
 	router.Post("/change_password", h.changePassword)

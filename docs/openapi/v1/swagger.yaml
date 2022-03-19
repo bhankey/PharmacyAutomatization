@@ -23,6 +23,8 @@ securityDefinitions:
     name: Authorization
 
 paths:
+
+  # TODO test
   /auth/login:
     post:
       tags:
@@ -45,6 +47,8 @@ paths:
           description: internal server error
           schema:
             $ref: '#/definitions/BaseResponse'
+
+  # TODO test
   /auth/refresh:
     post:
       tags:
@@ -68,6 +72,7 @@ paths:
           schema:
             $ref: '#/definitions/BaseResponse'
 
+  # TODO test
   /user/register:
     post:
       tags:
@@ -92,6 +97,8 @@ paths:
           description: internal server error
           schema:
             $ref: '#/definitions/BaseResponse'
+
+  # TODO test
   /user/request_to_change_password:
     post:
       tags:
@@ -114,6 +121,8 @@ paths:
           description: internal server error
           schema:
             $ref: '#/definitions/BaseResponse'
+
+  # TODO test
   /user/change_password:
     post:
       tags:
@@ -136,6 +145,8 @@ paths:
           description: internal server error
           schema:
             $ref: '#/definitions/BaseResponse'
+
+  # TODO test
   /user/all:
     get:
       tags:
@@ -144,7 +155,7 @@ paths:
         - JWT: [ ]
       parameters:
         - in: query
-          name: last_user_id
+          name: last_id
           type: integer
           required: true
           default: 0
@@ -168,6 +179,8 @@ paths:
           description: internal server error
           schema:
             $ref: '#/definitions/BaseResponse'
+
+  # TODO test
   /user/update:
     post:
       tags:
@@ -248,7 +261,9 @@ paths:
           description: internal server error
           schema:
             $ref: '#/definitions/BaseResponse'
-  /pharmacy/create: # TODO 1
+
+  # TODO test
+  /pharmacy/create:
     post:
       tags:
         - pharmacy
@@ -296,12 +311,27 @@ paths:
           description: internal server error
           schema:
             $ref: '#/definitions/BaseResponse'
-  /pharmacy/all: # TODO 1
+
+  # TODO test
+  /pharmacy/all:
     get:
       tags:
         - pharmacy
       security:
         - JWT: []
+      parameters:
+        - in: query
+          name: last_id
+          type: integer
+          required: true
+          default: 0
+        - in: query
+          name: limit
+          type: integer
+          required: false
+          default: 100
+          minimum: 0
+          maximum: 5000
       responses:
         200:
           description: ok
@@ -363,7 +393,9 @@ paths:
           description: internal server error
           schema:
             $ref: '#/definitions/BaseResponse'
-  /pharmacy/products: # TODO 1
+
+  # TODO test
+  /pharmacy/products:
     get:
       tags:
         - pharmacy
@@ -383,7 +415,61 @@ paths:
           schema:
             $ref: '#/definitions/BaseResponse'
 
-  /purchase/add: # TODO 1 ADD idempotence. Use websocket with this endpoint
+  # TODO 1
+  /pharmacy/product:
+    post:
+      tags:
+        - pharmacy
+      security:
+        - JWT: [ ]
+      description: 'Add product'
+      parameters:
+        - in: body
+          name: body
+          schema:
+            $ref: '#/definitions/Product'
+      responses:
+        200:
+          description: ok
+          schema:
+            $ref: '#/definitions/BaseResponse'
+        401:
+          description: failed
+          schema:
+            $ref: '#/definitions/BaseResponse'
+        500:
+          description: internal server error
+          schema:
+            $ref: '#/definitions/BaseResponse'
+    put:
+      tags:
+        - pharmacy
+      security:
+        - JWT: [ ]
+      description: 'edit product'
+      parameters:
+        - in: body
+          name: body
+          schema:
+            $ref: '#/definitions/Product'
+      responses:
+        200:
+          description: ok
+          schema:
+            $ref: '#/definitions/PharmacyGetAllProductsResponse'
+        401:
+          description: failed
+          schema:
+            $ref: '#/definitions/BaseResponse'
+        500:
+          description: internal server error
+          schema:
+            $ref: '#/definitions/BaseResponse'
+
+
+
+  # TODO test
+  /purchase/add: # TODO ADD idempotence. Use websocket with this endpoint
     post:
       tags:
         - purchase
@@ -407,7 +493,9 @@ paths:
           description: internal server error
           schema:
             $ref: '#/definitions/BaseResponse'
-  /purchase/show: # TODO 1
+
+  # TODO test
+  /purchase/show:
     get:
       tags:
         - purchase
@@ -418,6 +506,10 @@ paths:
           name: purchase_uuid
           type: string
           format: uuid
+
+        - in: query
+          name: is_social_card
+          type: boolean
       responses:
         200:
           description: ok
@@ -431,7 +523,9 @@ paths:
           description: internal server error
           schema:
             $ref: '#/definitions/BaseResponse'
-  /purchase/confirm: # TODO 3
+
+  # TODO test
+  /purchase/confirm:
     post:
       tags:
         - purchase
@@ -493,6 +587,7 @@ definitions:
     required:
       - email
       - password
+      - role
     properties:
       name:
         type: string
@@ -504,8 +599,11 @@ definitions:
       password:
         type: string
         minLength: 8
-      default_pharmacy_name:
+      default_pharmacy_id:
+        type: integer
+      role:
         type: string
+
 
   RequestPasswordChangeRequest:
     type: object
@@ -537,6 +635,7 @@ definitions:
     properties:
       pharmacys:
         type: array
+        x-nullable: false
         x-omitempty: false
         items:
           $ref: '#/definitions/Pharmacy'
@@ -545,12 +644,18 @@ definitions:
   Pharmacy:
     type: object
     properties:
+        id:
+          type: integer
+          x-omitempty: false
+          x-nullable: false
         name:
           type: string
           x-omitempty: false
+          x-nullable: false
         address:
           $ref: '#/definitions/Address'
           x-omitempty: false
+          x-nullable: false
 
   Address:
     type: object
@@ -558,12 +663,15 @@ definitions:
       city:
         type: string
         x-omitempty: false
+        x-nullable: false
       street:
         type: string
         x-omitempty: false
+        x-nullable: false
       house:
         type: string
         x-omitempty: false
+        x-nullable: false
 
   PharmacyBlockRequest:
     type: object
@@ -585,11 +693,27 @@ definitions:
       products:
         type: array
         items:
-          $ref: '#/definitions/Products'
+          $ref: '#/definitions/Product'
 
-  Products:
+  Product:
     type: object
     properties:
+      name:
+        type: string
+      price:
+        type: integer
+      count:
+        type: integer
+      position:
+        type: string
+      need_recepi:
+        type: boolean
+
+  ProductWithID:
+    type: object
+    properties:
+      id:
+        type: integer
       name:
         type: string
       price:

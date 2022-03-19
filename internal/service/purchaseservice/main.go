@@ -12,7 +12,7 @@ type Service struct {
 }
 
 type ReceiptRepo interface {
-	CreateReceipt(ctx context.Context, userID, pharmacyID, sum, discount int) (int, error)
+	CreateReceipt(ctx context.Context, userID, pharmacyID, sum, discount int, purchaseUUID string) (int, error)
 }
 
 type ProductRepo interface {

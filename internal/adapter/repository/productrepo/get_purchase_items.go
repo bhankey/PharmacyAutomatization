@@ -12,7 +12,7 @@ func (r *Repository) GetPurchaseProducts(
 	pharmacyID int,
 	purchaseUUID string,
 ) ([]entities.PurchaseProductItem, error) {
-	errBase := fmt.Sprintf("pharmacyrepo.GetAvailablePharmacyProducts(%d)", pharmacyID)
+	errBase := fmt.Sprintf("productrepo.GetPurchaseProducts(%d, %s)", pharmacyID, purchaseUUID)
 
 	const query = `
 		SELECT p.name, p.price, COUNT(p_item.id) as count
@@ -21,7 +21,6 @@ func (r *Repository) GetPurchaseProducts(
 		WHERE pharmacy_id = $1
 		  AND p_item.reservation = $2
 		GROUP BY p.id
-		ORDER BY p_item.priority
 `
 
 	type row struct {

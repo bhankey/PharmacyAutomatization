@@ -6,6 +6,9 @@ build:
 docker:
 	docker-compose -f .build/docker-compose.yaml up
 
+docker-down:
+	docker-compose -f .build/docker-compose.yaml down
+
 migrations-down:
 	MIGRATIONS_STATUS=down docker-compose -f docker-compose-down-migrations.yaml up
 

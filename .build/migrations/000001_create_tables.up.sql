@@ -23,7 +23,7 @@ CREATE TABLE IF NOT EXISTS pharmacies (
 );
 
 CREATE TRIGGER update_pharmacy_time BEFORE UPDATE
-    ON pharmacy FOR EACH ROW EXECUTE PROCEDURE
+    ON pharmacies FOR EACH ROW EXECUTE PROCEDURE
     update_time_column();
 
 CREATE TABLE IF NOT EXISTS  rights(
@@ -50,7 +50,7 @@ CREATE TABLE IF NOT EXISTS users (
         password_hash text NOT NULL,
         use_ip_check bool NOT NULL DEFAULT true,
         is_blocked bool NOT NULL DEFAULT false,
-        default_pharmacy_id int REFERENCES pharmacy(id),
+        default_pharmacy_id int REFERENCES pharmacies(id),
         creation_time timestamp NOT NULL DEFAULT NOW(),
         update_time timestamp NOT NULL DEFAULT NOW()
 );
@@ -109,7 +109,7 @@ CREATE TRIGGER update_product_update_time BEFORE UPDATE
 CREATE TABLE IF NOT EXISTS receipt (
         id bigserial NOT NULL PRIMARY KEY,
         user_id int NOT NULL REFERENCES users(id),
-        pharmacy_id int NOT NULL REFERENCES pharmacy(id),
+        pharmacy_id int NOT NULL REFERENCES pharmacies(id),
         sum double precision NOT NULL,
         discount int NOT NULL DEFAULT 0,
         purchase_uuid uuid NOT NULL,
@@ -125,7 +125,7 @@ CREATE TABLE IF NOT EXISTS product_item (
         id bigserial NOT NULL PRIMARY KEY,
         product_id int NOT NULL REFERENCES product(id),
         receipt_id bigint REFERENCES receipt(id),
-        pharmacy_id int NOT NULL REFERENCES pharmacy(id),
+        pharmacy_id int NOT NULL REFERENCES pharmacies(id),
         position text NOT NULL DEFAULT '',
         manufactured_time timestamp NOT NULL,
         reservation uuid,
@@ -150,7 +150,7 @@ CREATE TABLE IF NOT EXISTS complaints (
         email text NOT NULL DEFAULT '',
         complaint text NOT NULL DEFAULT '',
         worker_name text NOT NULL DEFAULT '',
-        pharmacy_id int REFERENCES pharmacy(id)
+        pharmacy_id int REFERENCES pharmacies(id)
 );
 
 CREATE TABLE IF NOT EXISTS refresh_tokens (

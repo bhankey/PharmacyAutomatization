@@ -13,9 +13,10 @@ func (s *AuthService) createAndSaveRefreshToken(
 	userID int,
 	email string,
 	role entities.Role,
+	pharmacyID int,
 	identifyData entities.UserIdentifyData,
 ) (string, error) {
-	signedToken, err := s.createAndSignedToken(userID, email, role, jwtExpireRefreshTime)
+	signedToken, err := s.createAndSignedToken(userID, email, role, pharmacyID, jwtExpireRefreshTime)
 	if err != nil {
 		return "", err
 	}
@@ -35,15 +36,16 @@ func (s *AuthService) createAndSaveRefreshToken(
 	return signedToken, nil
 }
 
-func (s *AuthService) createAndSignedToken(userID int, email string, role entities.Role, ttl time.Duration) (string, error) {
+func (s *AuthService) createAndSignedToken(userID int, email string, role entities.Role, pharmacyID int, ttl time.Duration) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, &entities.Claims{
 		RegisteredClaims: jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(ttl)),
 			IssuedAt:  jwt.NewNumericDate(time.Now()),
 		},
-		Email:  email,
-		UserID: userID,
-		Role:   role,
+		Email:      email,
+		UserID:     userID,
+		Role:       role,
+		PharmacyID: pharmacyID,
 	})
 
 	signedToken, err := token.SignedString([]byte(s.jwtKey))

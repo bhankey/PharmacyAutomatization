@@ -39,6 +39,9 @@ func (h *UserHandler) register(w http.ResponseWriter, r *http.Request) {
 		Surname:  req.Surname,
 		Email:    req.Email.String(),
 		Password: *req.Password,
+
+		Role:              entities.Role(*req.Role),
+		DefaultPharmacyID: int(req.DefaultPharmacyID),
 	}
 	if err := h.userSrv.Registry(ctx, user); err != nil {
 		h.WriteErrorResponse(ctx, w, err)
@@ -123,7 +126,7 @@ func (h *UserHandler) getAll(w http.ResponseWriter, r *http.Request) {
 
 	query := r.URL.Query()
 
-	lastUserID, err := strconv.Atoi(query.Get("last_user_id"))
+	lastUserID, err := strconv.Atoi(query.Get("last_id"))
 	if err != nil || lastUserID < 0 {
 		h.WriteErrorResponse(ctx, w, apperror.NewClientError(apperror.WrongRequest, err))
 

@@ -3,13 +3,14 @@ package pharmacyhandler
 import (
 	"encoding/json"
 	"fmt"
+	"net/http"
+	"strconv"
+
 	"github.com/bhankey/pharmacy-automatization/internal/apperror"
 	deliveryhttp "github.com/bhankey/pharmacy-automatization/internal/delivery/http"
 	"github.com/bhankey/pharmacy-automatization/internal/delivery/http/v1/models"
 	"github.com/bhankey/pharmacy-automatization/internal/entities"
 	"github.com/go-openapi/strfmt"
-	"net/http"
-	"strconv"
 )
 
 func (h *Handler) create(w http.ResponseWriter, r *http.Request) {
@@ -104,7 +105,14 @@ func (h *Handler) products(w http.ResponseWriter, r *http.Request) {
 	pharmacyID, _ := ctx.Value(entities.PharmacyID).(int)
 
 	if pharmacyID <= 0 {
-		h.WriteErrorResponse(ctx, w, apperror.NewClientError(apperror.WrongRequest, fmt.Errorf("failed to get user pharmacy")))
+		h.WriteErrorResponse(
+			ctx,
+			w,
+			apperror.NewClientError(
+				apperror.WrongRequest,
+				fmt.Errorf("failed to get user pharmacy"), // nolint: goerr113
+			),
+		)
 
 		return
 	}

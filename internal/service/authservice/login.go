@@ -46,7 +46,14 @@ func (s *AuthService) Login(
 		return entities.Tokens{}, fmt.Errorf("%s: failed to create and sigend accass token error: %w", errBase, err)
 	}
 
-	refreshToken, err := s.createAndSaveRefreshToken(ctx, user.ID, user.Email, user.Role, user.DefaultPharmacyID, identifyData)
+	refreshToken, err := s.createAndSaveRefreshToken(
+		ctx,
+		user.ID,
+		user.Email,
+		user.Role,
+		user.DefaultPharmacyID,
+		identifyData,
+	)
 	if err != nil {
 		return entities.Tokens{}, fmt.Errorf("%s: failed to create and sigend refresh token error: %w", errBase, err)
 	}

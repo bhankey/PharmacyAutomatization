@@ -36,7 +36,13 @@ func (s *AuthService) createAndSaveRefreshToken(
 	return signedToken, nil
 }
 
-func (s *AuthService) createAndSignedToken(userID int, email string, role entities.Role, pharmacyID int, ttl time.Duration) (string, error) {
+func (s *AuthService) createAndSignedToken(
+	userID int,
+	email string,
+	role entities.Role,
+	pharmacyID int,
+	ttl time.Duration,
+) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, &entities.Claims{
 		RegisteredClaims: jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(ttl)),

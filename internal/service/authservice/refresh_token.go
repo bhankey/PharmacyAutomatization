@@ -35,7 +35,14 @@ func (s *AuthService) RefreshToken(
 		return entities.Tokens{}, fmt.Errorf("failed to create access token error: %w", err)
 	}
 
-	newRefreshToken, err := s.createAndSaveRefreshToken(ctx, user.ID, user.Email, user.Role, user.DefaultPharmacyID, identifyData)
+	newRefreshToken, err := s.createAndSaveRefreshToken(
+		ctx,
+		user.ID,
+		user.Email,
+		user.Role,
+		user.DefaultPharmacyID,
+		identifyData,
+	)
 	if err != nil {
 		return entities.Tokens{}, fmt.Errorf("%s: failed to create refresh token error: %w", errBase, err)
 	}

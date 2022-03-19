@@ -21,7 +21,7 @@ type UserIdentifyData struct {
 type Role string
 
 const (
-	// All use only for access. Don't save in DB this value
+	// All use only for access. Don't save in DB this value.
 	All        Role = "all"
 	Admin      Role = "admin"
 	Apothecary Role = "apothecary"

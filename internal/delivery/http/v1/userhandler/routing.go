@@ -2,9 +2,9 @@ package userhandler
 
 import (
 	"context"
-	"github.com/bhankey/pharmacy-automatization/internal/delivery/http/middleware"
 
 	deliveryhttp "github.com/bhankey/pharmacy-automatization/internal/delivery/http"
+	"github.com/bhankey/pharmacy-automatization/internal/delivery/http/middleware"
 	"github.com/bhankey/pharmacy-automatization/internal/entities"
 	"github.com/go-chi/chi/v5"
 )
@@ -24,7 +24,11 @@ type UserSrv interface {
 	GetBatchOfUsers(ctx context.Context, lastClientID int, limit int) ([]entities.User, error)
 }
 
-func NewUserHandler(baseHandler *deliveryhttp.BaseHandler, userSrv UserSrv, authMiddleware *middleware.AuthMiddleware) *UserHandler {
+func NewUserHandler(
+	baseHandler *deliveryhttp.BaseHandler,
+	userSrv UserSrv,
+	authMiddleware *middleware.AuthMiddleware,
+) *UserHandler {
 	router := chi.NewRouter()
 
 	handler := &UserHandler{

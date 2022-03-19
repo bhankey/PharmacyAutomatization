@@ -3,12 +3,13 @@ package purchasehandler
 import (
 	"encoding/json"
 	"fmt"
+	"net/http"
+
 	"github.com/bhankey/pharmacy-automatization/internal/apperror"
 	deliveryhttp "github.com/bhankey/pharmacy-automatization/internal/delivery/http"
 	"github.com/bhankey/pharmacy-automatization/internal/delivery/http/v1/models"
 	"github.com/bhankey/pharmacy-automatization/internal/entities"
 	"github.com/go-openapi/strfmt"
-	"net/http"
 )
 
 func (h *Handler) add(w http.ResponseWriter, r *http.Request) {
@@ -51,7 +52,12 @@ func (h *Handler) show(w http.ResponseWriter, r *http.Request) {
 
 	purchaseUUID := query.Get("purchase_uuid")
 	if purchaseUUID == "" {
-		h.WriteErrorResponse(ctx, w, apperror.NewClientError(apperror.WrongRequest, fmt.Errorf("wrong requset")))
+		h.WriteErrorResponse(
+			ctx,
+			w,
+			apperror.NewClientError(
+				apperror.WrongRequest, fmt.Errorf("wrong requset")), // nolint: goerr113
+		)
 
 		return
 	}
@@ -106,7 +112,13 @@ func (h *Handler) confirm(w http.ResponseWriter, r *http.Request) {
 	userID, _ := ctx.Value(entities.UserID).(int)
 
 	if pharmacyID <= 0 {
-		h.WriteErrorResponse(ctx, w, apperror.NewClientError(apperror.WrongRequest, fmt.Errorf("failed to get user pharmacy or id")))
+		h.WriteErrorResponse(
+			ctx,
+			w,
+			apperror.NewClientError(
+				apperror.WrongRequest,
+				fmt.Errorf("failed to get user pharmacy or id")), // nolint: goerr113
+		)
 	}
 
 	err = h.purchaseSrv.ConfirmPurchase(ctx, userID, pharmacyID, string(req.PurchaseUUID), req.IsSocialCard)

@@ -1,26 +1,26 @@
 package container
 
 import (
+	"time"
+
 	"github.com/bhankey/pharmacy-automatization/internal/adapter/repository/addressrepo"
+	"github.com/bhankey/pharmacy-automatization/internal/adapter/repository/emailrepo"
+	"github.com/bhankey/pharmacy-automatization/internal/adapter/repository/onetimecodesrepo"
 	"github.com/bhankey/pharmacy-automatization/internal/adapter/repository/pharmacyrepo"
 	"github.com/bhankey/pharmacy-automatization/internal/adapter/repository/productrepo"
 	"github.com/bhankey/pharmacy-automatization/internal/adapter/repository/receiptrepo"
-	"github.com/bhankey/pharmacy-automatization/internal/delivery/http/v1/pharmacyhandler"
-	"github.com/bhankey/pharmacy-automatization/internal/delivery/http/v1/purchasehandler"
-	"github.com/bhankey/pharmacy-automatization/internal/service/pharmacyservice"
-	"github.com/bhankey/pharmacy-automatization/internal/service/purchaseservice"
-	"time"
-
-	"github.com/bhankey/pharmacy-automatization/internal/adapter/repository/emailrepo"
-	"github.com/bhankey/pharmacy-automatization/internal/adapter/repository/onetimecodesrepo"
 	"github.com/bhankey/pharmacy-automatization/internal/adapter/repository/tokenrepo"
 	"github.com/bhankey/pharmacy-automatization/internal/adapter/repository/userrepo"
 	"github.com/bhankey/pharmacy-automatization/internal/delivery/http"
 	"github.com/bhankey/pharmacy-automatization/internal/delivery/http/middleware"
 	"github.com/bhankey/pharmacy-automatization/internal/delivery/http/v1/authhandler"
+	"github.com/bhankey/pharmacy-automatization/internal/delivery/http/v1/pharmacyhandler"
+	"github.com/bhankey/pharmacy-automatization/internal/delivery/http/v1/purchasehandler"
 	"github.com/bhankey/pharmacy-automatization/internal/delivery/http/v1/swaggerhandler"
 	"github.com/bhankey/pharmacy-automatization/internal/delivery/http/v1/userhandler"
 	"github.com/bhankey/pharmacy-automatization/internal/service/authservice"
+	"github.com/bhankey/pharmacy-automatization/internal/service/pharmacyservice"
+	"github.com/bhankey/pharmacy-automatization/internal/service/purchaseservice"
 	"github.com/bhankey/pharmacy-automatization/internal/service/userservice"
 )
 
@@ -89,7 +89,11 @@ func (c *Container) GetV1PharmacyHandler() *pharmacyhandler.Handler {
 		}
 	}
 
-	typedDependency := pharmacyhandler.NewPharmacyHandler(c.getBaseHandler(), c.getPharmacyService(), c.GetAuthMiddleware())
+	typedDependency := pharmacyhandler.NewPharmacyHandler(
+		c.getBaseHandler(),
+		c.getPharmacyService(),
+		c.GetAuthMiddleware(),
+	)
 
 	c.dependencies[key] = typedDependency
 
@@ -107,7 +111,11 @@ func (c *Container) GetV1PurchaseHandler() *purchasehandler.Handler {
 		}
 	}
 
-	typedDependency := purchasehandler.NewPurchaseHandler(c.getBaseHandler(), c.getPurchaseService(), c.GetAuthMiddleware())
+	typedDependency := purchasehandler.NewPurchaseHandler(
+		c.getBaseHandler(),
+		c.getPurchaseService(),
+		c.GetAuthMiddleware(),
+	)
 
 	c.dependencies[key] = typedDependency
 

@@ -8,7 +8,12 @@ import (
 	"github.com/bhankey/pharmacy-automatization/internal/entities"
 )
 
-func (s *Service) GetPurchase(ctx context.Context, pharmacyID int, purchaseUUID string, isSocialCard bool) (entities.Purchase, error) {
+func (s *Service) GetPurchase(
+	ctx context.Context,
+	pharmacyID int,
+	purchaseUUID string,
+	isSocialCard bool,
+) (entities.Purchase, error) {
 	errBase := fmt.Sprintf("purchaseservice.GetPurchase(%d, %s)", pharmacyID, purchaseUUID)
 
 	products, err := s.productRepo.GetPurchaseProducts(ctx, pharmacyID, purchaseUUID)
@@ -22,7 +27,7 @@ func (s *Service) GetPurchase(ctx context.Context, pharmacyID int, purchaseUUID 
 	}
 
 	if isSocialCard {
-		sum = int(math.Floor(float64(sum) * 0.95))
+		sum = int(math.Floor(float64(sum) * entities.SocialCardDiscountMultiplier))
 	}
 
 	return entities.Purchase{

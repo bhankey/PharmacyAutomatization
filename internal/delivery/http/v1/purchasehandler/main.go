@@ -2,6 +2,7 @@ package purchasehandler
 
 import (
 	"context"
+
 	deliveryhttp "github.com/bhankey/pharmacy-automatization/internal/delivery/http"
 	"github.com/bhankey/pharmacy-automatization/internal/delivery/http/middleware"
 	"github.com/bhankey/pharmacy-automatization/internal/entities"
@@ -22,7 +23,11 @@ type PurchaseSrv interface {
 	GetPurchase(ctx context.Context, pharmacyID int, purchaseUUID string, isSocialCard bool) (entities.Purchase, error)
 }
 
-func NewPurchaseHandler(baseHandler *deliveryhttp.BaseHandler, purchaseSrv PurchaseSrv, authMiddleware *middleware.AuthMiddleware) *Handler {
+func NewPurchaseHandler(
+	baseHandler *deliveryhttp.BaseHandler,
+	purchaseSrv PurchaseSrv,
+	authMiddleware *middleware.AuthMiddleware,
+) *Handler {
 	router := chi.NewRouter()
 
 	handler := &Handler{

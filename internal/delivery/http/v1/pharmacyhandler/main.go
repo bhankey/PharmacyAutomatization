@@ -2,6 +2,7 @@ package pharmacyhandler
 
 import (
 	"context"
+
 	deliveryhttp "github.com/bhankey/pharmacy-automatization/internal/delivery/http"
 	"github.com/bhankey/pharmacy-automatization/internal/delivery/http/middleware"
 	"github.com/bhankey/pharmacy-automatization/internal/entities"
@@ -22,7 +23,11 @@ type PharmacySrv interface {
 	GetPharmacyProducts(ctx context.Context, pharmacyID int) ([]entities.PharmacyProductItem, error)
 }
 
-func NewPharmacyHandler(baseHandler *deliveryhttp.BaseHandler, pharmacySrv PharmacySrv, authMiddleware *middleware.AuthMiddleware) *Handler {
+func NewPharmacyHandler(
+	baseHandler *deliveryhttp.BaseHandler,
+	pharmacySrv PharmacySrv,
+	authMiddleware *middleware.AuthMiddleware,
+) *Handler {
 	router := chi.NewRouter()
 
 	handler := &Handler{

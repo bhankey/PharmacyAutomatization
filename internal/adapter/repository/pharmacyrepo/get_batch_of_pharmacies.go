@@ -7,11 +7,22 @@ import (
 	"github.com/bhankey/pharmacy-automatization/internal/entities"
 )
 
-func (r *Repository) GetBatchOfPharmacies(ctx context.Context, lastPharmacyID int, limit int) ([]entities.Pharmacy, error) {
+func (r *Repository) GetBatchOfPharmacies(
+	ctx context.Context,
+	lastPharmacyID int,
+	limit int,
+) ([]entities.Pharmacy, error) {
 	errBase := fmt.Sprintf("userrepo.GetBatchOfPharmacies(%d, %d)", lastPharmacyID, limit)
 
 	const query = `
-		SELECT pharmacies.id AS pharmacy_id, pharmacies.name, pharmacies.is_blocked, addresses.id as address_id, addresses.city, addresses.house, addresses.street
+		SELECT 
+		       pharmacies.id AS pharmacy_id,
+		       pharmacies.name,
+		       pharmacies.is_blocked, 
+		       addresses.id as address_id,
+		       addresses.city,
+		       addresses.house,
+		       addresses.street
 		FROM pharmacies LEFT JOIN addresses ON pharmacies.address_id = addresses.id
 		WHERE pharmacies.id > $1
 		LIMIT $2

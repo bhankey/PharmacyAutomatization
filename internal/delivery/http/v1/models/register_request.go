@@ -19,6 +19,9 @@ import (
 // swagger:model RegisterRequest
 type RegisterRequest struct {
 
+	// default pharmacy id
+	DefaultPharmacyID int64 `json:"default_pharmacy_id,omitempty"`
+
 	// email
 	// Required: true
 	// Format: email
@@ -31,6 +34,10 @@ type RegisterRequest struct {
 	// Required: true
 	// Min Length: 8
 	Password *string `json:"password"`
+
+	// role
+	// Required: true
+	Role *string `json:"role"`
 
 	// surname
 	Surname string `json:"surname,omitempty"`
@@ -45,6 +52,10 @@ func (m *RegisterRequest) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validatePassword(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateRole(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -74,6 +85,15 @@ func (m *RegisterRequest) validatePassword(formats strfmt.Registry) error {
 	}
 
 	if err := validate.MinLength("password", "body", *m.Password, 8); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *RegisterRequest) validateRole(formats strfmt.Registry) error {
+
+	if err := validate.Required("role", "body", m.Role); err != nil {
 		return err
 	}
 

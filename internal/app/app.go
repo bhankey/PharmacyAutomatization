@@ -68,6 +68,8 @@ func NewApp(configPath string) (*App, error) {
 		dependencies.GetV1SwaggerHandler(),
 		dependencies.GetV1AuthHandler(),
 		dependencies.GetV1UserHandler(),
+		dependencies.GetV1PharmacyHandler(),
+		dependencies.GetV1PurchaseHandler(),
 	)
 
 	mainRouter.Mount("/v1", v1Router)

@@ -47,9 +47,11 @@ func (m *AuthMiddleware) Middleware(next http.Handler) http.Handler {
 			return
 		}
 
+		// Better to move this to microservice and get only
 		ctx := r.Context()
 		ctx = context.WithValue(ctx, entities.UserID, claim.UserID)
 		ctx = context.WithValue(ctx, entities.Email, claim.Email)
+		ctx = context.WithValue(ctx, entities.PharmacyID, claim.PharmacyID)
 
 		r = r.WithContext(ctx)
 		next.ServeHTTP(w, r)

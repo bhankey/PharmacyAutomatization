@@ -11,11 +11,11 @@ import (
 	"github.com/bhankey/pharmacy-automatization/internal/entities"
 )
 
-func (r *UserRepo) GetUserByEmail(ctx context.Context, email string) (entities.User, error) {
+func (r *Repository) GetUserByEmail(ctx context.Context, email string) (entities.User, error) {
 	errBase := fmt.Sprintf("userrepo.GetUserByEmail(%s)", email)
 
 	const query = `
-		SELECT id, name, surname, email, password_hash, default_pharmacy_id
+		SELECT id, name, surname, email, password_hash, role, default_pharmacy_id
 		FROM users
 		WHERE email = $1
 		LIMIT 1
@@ -26,6 +26,7 @@ func (r *UserRepo) GetUserByEmail(ctx context.Context, email string) (entities.U
 		Name              string        `db:"name"`
 		Surname           string        `json:"surname"`
 		Email             string        `db:"email"`
+		Role              string        `db:"role"`
 		PasswordHash      string        `db:"password_hash"`
 		DefaultPharmacyID sql.NullInt64 `db:"default_pharmacy_id"`
 	}{}
@@ -44,6 +45,7 @@ func (r *UserRepo) GetUserByEmail(ctx context.Context, email string) (entities.U
 		Surname:           row.Surname,
 		Email:             row.Email,
 		PasswordHash:      row.PasswordHash,
+		Role:              entities.Role(row.Role),
 		DefaultPharmacyID: int(row.DefaultPharmacyID.Int64),
 	}, nil
 }

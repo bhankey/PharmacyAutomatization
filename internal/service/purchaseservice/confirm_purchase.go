@@ -12,7 +12,8 @@ func (s *Service) ConfirmPurchase(
 	ctx context.Context,
 	userID, pharmacyID int,
 	purchaseUUID string,
-	isSocialCardUsed bool) error {
+	isSocialCardUsed bool,
+) error {
 	errBase := fmt.Sprintf("purchaseservice.ConfirmPurchase(%s, %v)", purchaseUUID, isSocialCardUsed)
 
 	products, err := s.productRepo.GetPurchaseProducts(ctx, pharmacyID, purchaseUUID)

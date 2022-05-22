@@ -2,6 +2,7 @@ package userhandler
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"strconv"
 
@@ -126,16 +127,20 @@ func (h *UserHandler) getAll(w http.ResponseWriter, r *http.Request) {
 
 	query := r.URL.Query()
 
-	lastUserID, err := strconv.Atoi(query.Get("last_id"))
-	if err != nil || lastUserID < 0 {
-		h.WriteErrorResponse(ctx, w, apperror.NewClientError(apperror.WrongRequest, err))
+	lastUserID, _ := strconv.Atoi(query.Get("last_id"))
+	if lastUserID < 0 {
+		h.WriteErrorResponse(ctx, w, apperror.NewClientError(apperror.WrongRequest, fmt.Errorf("wrong last_id")))
 
 		return
 	}
 
-	limit, err := strconv.Atoi(query.Get("limit"))
-	if err != nil || limit < 0 || limit > 5000 {
-		h.WriteErrorResponse(ctx, w, apperror.NewClientError(apperror.WrongRequest, err))
+	limit, _ := strconv.Atoi(query.Get("limit"))
+	if limit == 0 {
+		limit = 100
+	}
+
+	if limit < 1 || limit > 5000 {
+		h.WriteErrorResponse(ctx, w, apperror.NewClientError(apperror.WrongRequest, fmt.Errorf("wrong limit")))
 
 		return
 	}

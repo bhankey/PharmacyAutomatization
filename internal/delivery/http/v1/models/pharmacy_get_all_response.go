@@ -19,15 +19,15 @@ import (
 // swagger:model PharmacyGetAllResponse
 type PharmacyGetAllResponse struct {
 
-	// pharmacys
-	Pharmacys []*Pharmacy `json:"pharmacys"`
+	// pharmacies
+	Pharmacies []*Pharmacy `json:"pharmacies"`
 }
 
 // Validate validates this pharmacy get all response
 func (m *PharmacyGetAllResponse) Validate(formats strfmt.Registry) error {
 	var res []error
 
-	if err := m.validatePharmacys(formats); err != nil {
+	if err := m.validatePharmacies(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -37,22 +37,22 @@ func (m *PharmacyGetAllResponse) Validate(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *PharmacyGetAllResponse) validatePharmacys(formats strfmt.Registry) error {
-	if swag.IsZero(m.Pharmacys) { // not required
+func (m *PharmacyGetAllResponse) validatePharmacies(formats strfmt.Registry) error {
+	if swag.IsZero(m.Pharmacies) { // not required
 		return nil
 	}
 
-	for i := 0; i < len(m.Pharmacys); i++ {
-		if swag.IsZero(m.Pharmacys[i]) { // not required
+	for i := 0; i < len(m.Pharmacies); i++ {
+		if swag.IsZero(m.Pharmacies[i]) { // not required
 			continue
 		}
 
-		if m.Pharmacys[i] != nil {
-			if err := m.Pharmacys[i].Validate(formats); err != nil {
+		if m.Pharmacies[i] != nil {
+			if err := m.Pharmacies[i].Validate(formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
-					return ve.ValidateName("pharmacys" + "." + strconv.Itoa(i))
+					return ve.ValidateName("pharmacies" + "." + strconv.Itoa(i))
 				} else if ce, ok := err.(*errors.CompositeError); ok {
-					return ce.ValidateName("pharmacys" + "." + strconv.Itoa(i))
+					return ce.ValidateName("pharmacies" + "." + strconv.Itoa(i))
 				}
 				return err
 			}
@@ -67,7 +67,7 @@ func (m *PharmacyGetAllResponse) validatePharmacys(formats strfmt.Registry) erro
 func (m *PharmacyGetAllResponse) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	var res []error
 
-	if err := m.contextValidatePharmacys(ctx, formats); err != nil {
+	if err := m.contextValidatePharmacies(ctx, formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -77,16 +77,16 @@ func (m *PharmacyGetAllResponse) ContextValidate(ctx context.Context, formats st
 	return nil
 }
 
-func (m *PharmacyGetAllResponse) contextValidatePharmacys(ctx context.Context, formats strfmt.Registry) error {
+func (m *PharmacyGetAllResponse) contextValidatePharmacies(ctx context.Context, formats strfmt.Registry) error {
 
-	for i := 0; i < len(m.Pharmacys); i++ {
+	for i := 0; i < len(m.Pharmacies); i++ {
 
-		if m.Pharmacys[i] != nil {
-			if err := m.Pharmacys[i].ContextValidate(ctx, formats); err != nil {
+		if m.Pharmacies[i] != nil {
+			if err := m.Pharmacies[i].ContextValidate(ctx, formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
-					return ve.ValidateName("pharmacys" + "." + strconv.Itoa(i))
+					return ve.ValidateName("pharmacies" + "." + strconv.Itoa(i))
 				} else if ce, ok := err.(*errors.CompositeError); ok {
-					return ce.ValidateName("pharmacys" + "." + strconv.Itoa(i))
+					return ce.ValidateName("pharmacies" + "." + strconv.Itoa(i))
 				}
 				return err
 			}

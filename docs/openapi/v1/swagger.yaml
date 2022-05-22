@@ -23,8 +23,6 @@ securityDefinitions:
     name: Authorization
 
 paths:
-
-  # TODO test
   /auth/login:
     post:
       tags:
@@ -38,7 +36,7 @@ paths:
         200:
           description: login success
           schema:
-            $ref: '#/definitions/BaseResponse'
+            $ref: '#/definitions/TokensResponse'
         401:
           description: failed to authorize
           schema:
@@ -48,7 +46,6 @@ paths:
           schema:
             $ref: '#/definitions/BaseResponse'
 
-  # TODO test
   /auth/refresh:
     post:
       tags:
@@ -62,7 +59,7 @@ paths:
         200:
           description: refresh success
           schema:
-            $ref: '#/definitions/BaseResponse'
+            $ref: '#/definitions/TokensResponse'
         401:
           description: failed to refresh
           schema:
@@ -72,7 +69,6 @@ paths:
           schema:
             $ref: '#/definitions/BaseResponse'
 
-  # TODO test
   /user/register:
     post:
       tags:
@@ -98,7 +94,6 @@ paths:
           schema:
             $ref: '#/definitions/BaseResponse'
 
-  # TODO test
   /user/request_to_change_password:
     post:
       tags:
@@ -122,7 +117,6 @@ paths:
           schema:
             $ref: '#/definitions/BaseResponse'
 
-  # TODO test
   /user/change_password:
     post:
       tags:
@@ -146,7 +140,6 @@ paths:
           schema:
             $ref: '#/definitions/BaseResponse'
 
-  # TODO test
   /user/all:
     get:
       tags:
@@ -180,7 +173,6 @@ paths:
           schema:
             $ref: '#/definitions/BaseResponse'
 
-  # TODO test
   /user/update:
     post:
       tags:
@@ -211,58 +203,7 @@ paths:
           description: internal server error
           schema:
             $ref: '#/definitions/BaseResponse'
-  # TODO some day do rigths system
-  /user/block: # TODO 3
-    post:
-      tags:
-        - user
-      security:
-        - JWT: [ ]
-      parameters:
-        - in: body
-          name: body
-          schema:
-            $ref: '#/definitions/UserBlockRequest'
-      responses:
-        200:
-          description: ok
-          schema:
-            $ref: '#/definitions/BaseResponse'
-        401:
-          description: failed
-          schema:
-            $ref: '#/definitions/BaseResponse'
-        500:
-          description: internal server error
-          schema:
-            $ref: '#/definitions/BaseResponse'
 
-  /pharmacy/block: # TODO 3
-    post:
-      tags:
-        - pharmacy
-      security:
-        - JWT: [ ]
-      parameters:
-        - in: body
-          name: body
-          schema:
-            $ref: '#/definitions/PharmacyBlockRequest'
-      responses:
-        200:
-          description: ok
-          schema:
-            $ref: '#/definitions/BaseResponse'
-        401:
-          description: failed
-          schema:
-            $ref: '#/definitions/BaseResponse'
-        500:
-          description: internal server error
-          schema:
-            $ref: '#/definitions/BaseResponse'
-
-  # TODO test
   /pharmacy/create:
     post:
       tags:
@@ -287,32 +228,6 @@ paths:
           description: internal server error
           schema:
             $ref: '#/definitions/BaseResponse'
-  /pharmacy/update: # TODO 2
-    put:
-      tags:
-        - pharmacy
-      security:
-        - JWT: [ ]
-      parameters:
-        - in: body
-          name: body
-          schema:
-            $ref: '#/definitions/Pharmacy'
-      responses:
-        200:
-          description: ok
-          schema:
-            $ref: '#/definitions/BaseResponse'
-        401:
-          description: failed
-          schema:
-            $ref: '#/definitions/BaseResponse'
-        500:
-          description: internal server error
-          schema:
-            $ref: '#/definitions/BaseResponse'
-
-  # TODO test
   /pharmacy/all:
     get:
       tags:
@@ -337,30 +252,6 @@ paths:
           description: ok
           schema:
             $ref: '#/definitions/PharmacyGetAllResponse'
-        401:
-          description: failed
-          schema:
-            $ref: '#/definitions/BaseResponse'
-        500:
-          description: internal server error
-          schema:
-            $ref: '#/definitions/BaseResponse'
-  /pharmacy/complaints: # TODO 3
-    get:
-      tags:
-        - pharmacy
-      security:
-        - JWT: []
-      parameters:
-        - in: query
-          name: pharmacy_id
-          type: integer
-          required: true
-      responses:
-        200:
-          description: ok
-          schema:
-            $ref: '#/definitions/PharmacyComplaintsResponse'
         401:
           description: failed
           schema:
@@ -394,8 +285,7 @@ paths:
           schema:
             $ref: '#/definitions/BaseResponse'
 
-  # TODO test
-  /pharmacy/products:
+  /products/get_available_by_user_pharmacy:
     get:
       tags:
         - pharmacy
@@ -415,61 +305,7 @@ paths:
           schema:
             $ref: '#/definitions/BaseResponse'
 
-  # TODO 1
-  /pharmacy/product:
-    post:
-      tags:
-        - pharmacy
-      security:
-        - JWT: [ ]
-      description: 'Add product'
-      parameters:
-        - in: body
-          name: body
-          schema:
-            $ref: '#/definitions/Product'
-      responses:
-        200:
-          description: ok
-          schema:
-            $ref: '#/definitions/BaseResponse'
-        401:
-          description: failed
-          schema:
-            $ref: '#/definitions/BaseResponse'
-        500:
-          description: internal server error
-          schema:
-            $ref: '#/definitions/BaseResponse'
-    put:
-      tags:
-        - pharmacy
-      security:
-        - JWT: [ ]
-      description: 'edit product'
-      parameters:
-        - in: body
-          name: body
-          schema:
-            $ref: '#/definitions/Product'
-      responses:
-        200:
-          description: ok
-          schema:
-            $ref: '#/definitions/PharmacyGetAllProductsResponse'
-        401:
-          description: failed
-          schema:
-            $ref: '#/definitions/BaseResponse'
-        500:
-          description: internal server error
-          schema:
-            $ref: '#/definitions/BaseResponse'
-
-
-
-  # TODO test
-  /purchase/add: # TODO ADD idempotence. Use websocket with this endpoint
+  /products/add_to_reservation: # TODO ADD idempotence. Use websocket with this endpoint
     post:
       tags:
         - purchase
@@ -494,8 +330,32 @@ paths:
           schema:
             $ref: '#/definitions/BaseResponse'
 
-  # TODO test
-  /purchase/show:
+  /products/delete_from_reservation: # TODO ADD idempotence. Use websocket with this endpoint
+    post:
+      tags:
+        - purchase
+      security:
+        - JWT: [ ]
+      parameters:
+        - in: body
+          name: body
+          schema:
+            $ref: '#/definitions/PurchaseAddRequest'
+      responses:
+        200:
+          description: ok
+          schema:
+            $ref: '#/definitions/BaseResponse'
+        401:
+          description: failed
+          schema:
+            $ref: '#/definitions/BaseResponse'
+        500:
+          description: internal server error
+          schema:
+            $ref: '#/definitions/BaseResponse'
+
+  /products/show_reservation:
     get:
       tags:
         - purchase
@@ -524,8 +384,7 @@ paths:
           schema:
             $ref: '#/definitions/BaseResponse'
 
-  # TODO test
-  /purchase/confirm:
+  /products/confirm_purchase:
     post:
       tags:
         - purchase
@@ -559,6 +418,16 @@ definitions:
         x-omitempty: false
       success:
         type: boolean
+        x-omitempty: false
+
+  TokensResponse:
+    type: object
+    properties:
+      access_token:
+        type: string
+        x-omitempty: false
+      refresh_token:
+        type: string
         x-omitempty: false
 
   UserLoginRequest:
@@ -603,7 +472,9 @@ definitions:
         type: integer
       role:
         type: string
-
+        enum:
+          - 'admin'
+          - 'apothecary'
 
   RequestPasswordChangeRequest:
     type: object
@@ -633,7 +504,7 @@ definitions:
   PharmacyGetAllResponse:
     type: object
     properties:
-      pharmacys:
+      pharmacies:
         type: array
         x-nullable: false
         x-omitempty: false

@@ -45,6 +45,39 @@ func (h *Handler) add(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
+func (h *Handler) delete(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	defer func() { _ = r.Body.Close() }()
+	var req models.PurchaseAddRequest
+
+	decoder := json.NewDecoder(r.Body)
+
+	err := decoder.Decode(&req)
+	if err != nil {
+		h.WriteErrorResponse(ctx, w, apperror.NewClientError(apperror.WrongRequest, err))
+
+		return
+	}
+
+	if err := req.Validate(strfmt.NewFormats()); err != nil {
+		h.WriteErrorResponse(ctx, w, apperror.NewClientError(apperror.WrongRequest, err))
+
+		return
+	}
+
+	if err := h.purchaseSrv.DeleteFromPurchase(ctx, req.ProductName, req.Position, req.PurchaseUUID); err != nil {
+		h.WriteErrorResponse(ctx, w, err)
+
+		return
+	}
+
+	deliveryhttp.WriteResponse(w, models.BaseResponse{
+		Error:   "",
+		Success: true,
+	})
+}
+
 func (h *Handler) show(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 

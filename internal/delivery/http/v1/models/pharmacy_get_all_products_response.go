@@ -20,7 +20,7 @@ import (
 type PharmacyGetAllProductsResponse struct {
 
 	// products
-	Products []*Products `json:"products"`
+	Products []*Product `json:"products"`
 }
 
 // Validate validates this pharmacy get all products response

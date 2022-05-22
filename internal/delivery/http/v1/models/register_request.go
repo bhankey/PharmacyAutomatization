@@ -7,6 +7,7 @@ package models
 
 import (
 	"context"
+	"encoding/json"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
@@ -37,6 +38,7 @@ type RegisterRequest struct {
 
 	// role
 	// Required: true
+	// Enum: [admin apothecary]
 	Role *string `json:"role"`
 
 	// surname
@@ -91,9 +93,43 @@ func (m *RegisterRequest) validatePassword(formats strfmt.Registry) error {
 	return nil
 }
 
+var registerRequestTypeRolePropEnum []interface{}
+
+func init() {
+	var res []string
+	if err := json.Unmarshal([]byte(`["admin","apothecary"]`), &res); err != nil {
+		panic(err)
+	}
+	for _, v := range res {
+		registerRequestTypeRolePropEnum = append(registerRequestTypeRolePropEnum, v)
+	}
+}
+
+const (
+
+	// RegisterRequestRoleAdmin captures enum value "admin"
+	RegisterRequestRoleAdmin string = "admin"
+
+	// RegisterRequestRoleApothecary captures enum value "apothecary"
+	RegisterRequestRoleApothecary string = "apothecary"
+)
+
+// prop value enum
+func (m *RegisterRequest) validateRoleEnum(path, location string, value string) error {
+	if err := validate.EnumCase(path, location, value, registerRequestTypeRolePropEnum, true); err != nil {
+		return err
+	}
+	return nil
+}
+
 func (m *RegisterRequest) validateRole(formats strfmt.Registry) error {
 
 	if err := validate.Required("role", "body", m.Role); err != nil {
+		return err
+	}
+
+	// value enum
+	if err := m.validateRoleEnum("role", "body", *m.Role); err != nil {
 		return err
 	}
 

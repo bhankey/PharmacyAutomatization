@@ -19,6 +19,7 @@ type Handler struct {
 
 type PurchaseSrv interface {
 	AddToPurchase(ctx context.Context, productName string, position string, purchaseUUID string) error
+	DeleteFromPurchase(ctx context.Context, productName string, position string, purchaseUUID string) error
 	ConfirmPurchase(ctx context.Context, userID, pharmacyID int, purchaseUUID string, isSocialCardUsed bool) error
 	GetPurchase(ctx context.Context, pharmacyID int, purchaseUUID string, isSocialCard bool) (entities.Purchase, error)
 }
@@ -47,4 +48,5 @@ func (h *Handler) initRoutes(router chi.Router, authMiddleware *middleware.AuthM
 	router.Post("/add", h.add)
 	router.Post("/confirm", h.confirm)
 	router.Get("/show", h.show)
+	router.Post("/delete", h.delete)
 }

@@ -64,9 +64,9 @@ func (h *AuthHandler) login(w http.ResponseWriter, r *http.Request) {
 	http.SetCookie(w, &accessTokenCookie)
 	http.SetCookie(w, &refreshTokenCookie)
 
-	deliveryhttp.WriteResponse(w, models.BaseResponse{
-		Error:   "",
-		Success: true,
+	deliveryhttp.WriteResponse(w, models.TokensResponse{
+		AccessToken:  tokens.AccessToken,
+		RefreshToken: tokens.RefreshToken,
 	})
 }
 
@@ -123,8 +123,8 @@ func (h *AuthHandler) refresh(w http.ResponseWriter, r *http.Request) {
 	http.SetCookie(w, &accessTokenCookie)
 	http.SetCookie(w, &refreshTokenCookie)
 
-	deliveryhttp.WriteResponse(w, models.BaseResponse{
-		Error:   "",
-		Success: true,
+	deliveryhttp.WriteResponse(w, models.TokensResponse{
+		AccessToken:  tokens.AccessToken,
+		RefreshToken: tokens.RefreshToken,
 	})
 }

@@ -43,9 +43,9 @@ func NewApp(configPath string) (*App, error) {
 	}
 
 	smtp, err := newSMTPClient(config)
-	if err != nil {
-		return nil, err
-	}
+	//if err != nil {
+	//	return nil, err
+	//}
 
 	dependencies := container.NewContainer(
 		log,

@@ -95,7 +95,7 @@ func (h *Handler) all(w http.ResponseWriter, r *http.Request) {
 		})
 	}
 	deliveryhttp.WriteResponse(w, models.PharmacyGetAllResponse{
-		Pharmacys: resp,
+		Pharmacies: resp,
 	})
 }
 
@@ -124,9 +124,9 @@ func (h *Handler) products(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	resp := make([]*models.Products, 0, len(products))
+	resp := make([]*models.Product, 0, len(products))
 	for _, product := range products {
-		resp = append(resp, &models.Products{
+		resp = append(resp, &models.Product{
 			Count:      int64(product.Count),
 			Name:       product.Name,
 			NeedRecepi: product.RecipeOnly,
